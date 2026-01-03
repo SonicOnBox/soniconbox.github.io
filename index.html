@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Az Én Weboldalam</title>
+    <title>SonicOnBox - Portfolio</title>
     <style>
-        /* Alap beállítások */
+        /* Basic Settings */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -15,7 +15,7 @@
             background-color: #f4f4f4;
         }
 
-        /* Fejléc stílusok */
+        /* Header Styles */
         header {
             background-color: #2c3e50;
             color: white;
@@ -26,7 +26,7 @@
         header h1 { margin: 0; font-size: 2.5rem; }
         header p { font-size: 1.2rem; opacity: 0.8; }
 
-        /* Fő tartalom */
+        /* Main Content Container */
         .container {
             width: 80%;
             max-width: 800px;
@@ -37,36 +37,42 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
-        /* Profilkép keret */
+        /* Profile Image */
         .profile-img {
             width: 150px;
             height: 150px;
-            border-radius: 50%; /* Ez csinál kört a képből */
+            border-radius: 50%;
             object-fit: cover;
             display: block;
             margin: 0 auto 20px auto;
             border: 5px solid #ecf0f1;
         }
 
-        /* Gombok és linkek */
+        /* Buttons */
         .btn {
             display: inline-block;
-            background: #3498db;
             color: white;
             padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;
-            margin-top: 10px;
-            transition: background 0.3s;
+            margin: 5px;
+            transition: opacity 0.3s;
+            font-weight: bold;
         }
-        .btn:hover { background: #2980b9; }
+        .btn:hover { opacity: 0.8; }
 
-        /* Szakaszok */
+        /* Social Media Specific Colors */
+        .btn-youtube { background-color: #FF0000; }
+        .btn-deviantart { background-color: #05CC47; }
+        .btn-bluesky { background-color: #0085ff; }
+        .btn-github { background-color: #333; }
+
+        /* Sections */
         section { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
         section:last-child { border-bottom: none; }
         h2 { color: #2c3e50; }
 
-        /* Lábléc */
+        /* Footer */
         footer {
             text-align: center;
             padding: 20px;
@@ -79,37 +85,42 @@
 <body>
 
     <header>
-        <h1>Üdvözöllek az oldalamon!</h1>
-        <p>Webfejlesztő | Hobbista | GitHub Felhasználó</p>
+        <h1>SonicOnBox</h1>
+        <p>Content Creator | Artist</p>
     </header>
 
     <div class="container">
-        <img src="https://via.placeholder.com/150" alt="Profilkép" class="profile-img">
+        <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-img">
 
         <section>
-            <h2>Rólam</h2>
-            <p>Szia! Ez itt a bemutatkozó szövegem helye. Ide írhatsz arról, hogy mivel foglalkozol, mik a hobbijaid, és miért hoztad létre ezt az oldalt.</p>
-            <p>A GitHub Pages segítségével ez az oldal teljesen ingyenesen fut.</p>
+            <h2>About Me</h2>
+            <p>Welcome to my personal website! I am a content creator and artist. Here you can find links to my work and social media profiles.</p>
+            <p>Feel free to explore my projects below.</p>
         </section>
 
         <section>
-            <h2>Projektjeim</h2>
+            <h2>My Projects</h2>
             <ul>
-                <li><strong>Első weboldal:</strong> Amit éppen most nézel.</li>
-                <li><strong>Második projekt:</strong> Ide írhatsz jövőbeli terveket.</li>
-                <li><strong>Hobbik:</strong> Fotózás, túrázás, programozás.</li>
+                <li><strong>Artworks:</strong> Check out my gallery on DeviantArt.</li>
+                <li><strong>Videos:</strong> Watch my latest content on YouTube.</li>
+                <li><strong>Updates:</strong> Follow me on BlueSky for daily updates.</li>
             </ul>
         </section>
 
         <section>
-            <h2>Kapcsolat</h2>
-            <p>Ha szeretnél velem kapcsolatba lépni, itt megtalálsz:</p>
-            <a href="https://github.com/" target="_blank" class="btn">GitHub Profilom</a>
+            <h2>Follow Me</h2>
+            <p>You can find me on these platforms:</p>
+            
+            <div style="text-align: center;">
+                <a href="https://www.youtube.com/@SonicOnBox" target="_blank" class="btn btn-youtube">YouTube</a>
+                <a href="https://www.deviantart.com/soniconbox" target="_blank" class="btn btn-deviantart">DeviantArt</a>
+                <a href="https://bsky.app/profile/soniconbox.bsky.social" target="_blank" class="btn btn-bluesky">BlueSky</a>
+                </div>
         </section>
     </div>
 
     <footer>
-        <p>&copy; 2024 Minden jog fenntartva.</p>
+        <p>&copy; 2024 SonicOnBox. All rights reserved.</p>
     </footer>
 
 </body>
