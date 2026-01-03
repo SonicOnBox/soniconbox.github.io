@@ -15,26 +15,33 @@
             background-color: #f4f4f4;
         }
 
-        /* Header Styles */
+        /* --- HEADER BANNER SETTINGS --- */
         header {
-            background-color: #2c3e50;
+            /* Ez a sor felel a bannerért.
+               Van rajta egy sötét átmenet (rgba 0,0,0,0.6), hogy a szöveg olvasható legyen.
+               A 'url(...)' részbe kerül a kép linkje. Most egy helykitöltő van ott.
+            */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://via.placeholder.com/1200x400');
+            background-size: cover; /* Ensures the image covers the whole area */
+            background-position: center; /* Centers the image */
             color: white;
-            padding: 2rem 0;
+            padding: 5rem 0; /* Taller padding for a bigger banner look */
             text-align: center;
         }
 
-        header h1 { margin: 0; font-size: 2.5rem; }
-        header p { font-size: 1.2rem; opacity: 0.8; }
+        header h1 { margin: 0; font-size: 3rem; }
+        header p { font-size: 1.3rem; opacity: 0.9; margin-top: 10px; font-weight: 300; }
 
         /* Main Content Container */
         .container {
             width: 80%;
             max-width: 800px;
-            margin: 20px auto;
+            margin: -50px auto 20px auto; /* Negative top margin pulls it up into the banner */
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative; /* Needed for the overlap effect */
         }
 
         /* Profile Image */
@@ -45,7 +52,8 @@
             object-fit: cover;
             display: block;
             margin: 0 auto 20px auto;
-            border: 5px solid #ecf0f1;
+            border: 5px solid white; /* White border looks better overlapping the banner */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         /* Buttons */
@@ -65,7 +73,6 @@
         .btn-youtube { background-color: #FF0000; }
         .btn-deviantart { background-color: #05CC47; }
         .btn-bluesky { background-color: #0085ff; }
-        .btn-github { background-color: #333; }
 
         /* Sections */
         section { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
@@ -86,36 +93,35 @@
 
     <header>
         <h1>SonicOnBox</h1>
-        <p>Content Creator | Artist</p>
+        <p>Content Creator | Modeller | Designer | Modder |</p>
     </header>
 
     <div class="container">
-        <img src="https://via.placeholder.com/150" alt="Profile Picture" class="profile-img">
+        <img src="profil.jpg" alt="Profile Picture" class="profile-img">
 
         <section>
             <h2>About Me</h2>
-            <p>Welcome to my personal website! I am a content creator and artist. Here you can find links to my work and social media profiles.</p>
-            <p>Feel free to explore my projects below.</p>
+            <p>Welcome to my personal portfolio! I am passionate about creating content, 3D modelling, design, and modding. Here you can connect with me and follow my latest work across various platforms.</p>
         </section>
 
         <section>
-            <h2>My Projects</h2>
+            <h2>Where to find my work</h2>
             <ul>
-                <li><strong>Artworks:</strong> Check out my gallery on DeviantArt.</li>
-                <li><strong>Videos:</strong> Watch my latest content on YouTube.</li>
-                <li><strong>Updates:</strong> Follow me on BlueSky for daily updates.</li>
+                <li><strong>YouTube:</strong> Videos, showcases, and content creation.</li>
+                <li><strong>DeviantArt:</strong> Designs, renders, and artistic projects.</li>
+                <li><strong>BlueSky:</strong> Social updates and community interaction.</li>
             </ul>
         </section>
 
         <section>
             <h2>Follow Me</h2>
-            <p>You can find me on these platforms:</p>
+            <p>Click the buttons below to visit my profiles:</p>
             
-            <div style="text-align: center;">
+            <div style="text-align: center; margin-top: 20px;">
                 <a href="https://www.youtube.com/@SonicOnBox" target="_blank" class="btn btn-youtube">YouTube</a>
                 <a href="https://www.deviantart.com/soniconbox" target="_blank" class="btn btn-deviantart">DeviantArt</a>
                 <a href="https://bsky.app/profile/soniconbox.bsky.social" target="_blank" class="btn btn-bluesky">BlueSky</a>
-                </div>
+            </div>
         </section>
     </div>
 
