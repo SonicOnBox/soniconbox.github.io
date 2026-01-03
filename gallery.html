@@ -73,6 +73,9 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
             background: #fff;
+            display: block;
+            text-decoration: none;
+            color: #333;
         }
         .art-card:hover { transform: scale(1.03); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         
@@ -101,6 +104,7 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            background: #000;
         }
         .video-wrapper iframe {
             position: absolute;
@@ -112,7 +116,19 @@
         }
 
         h2 { color: #2c3e50; border-left: 5px solid #3498db; padding-left: 10px; }
-        .loading-text { text-align: center; color: #777; font-style: italic; }
+        
+        .loading-text { 
+            text-align: center; 
+            color: #777; 
+            font-style: italic; 
+            grid-column: 1 / -1; /* Középre igazítás */
+        }
+
+        .error-message {
+            color: red;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
 
         footer {
             text-align: center;
@@ -142,6 +158,9 @@
             <div id="deviantart-gallery" class="gallery">
                 <p class="loading-text">Loading artworks...</p>
             </div>
+            <div style="text-align:center;">
+                <a href="https://www.deviantart.com/soniconbox" target="_blank" class="btn" style="background:#05CC47; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">View All on DeviantArt</a>
+            </div>
         </section>
 
         <hr style="border: 0; border-top: 1px solid #eee; margin: 40px 0;">
@@ -152,6 +171,9 @@
             <div id="youtube-gallery" class="gallery">
                 <p class="loading-text">Loading videos...</p>
             </div>
+            <div style="text-align:center;">
+                <a href="https://www.youtube.com/@SonicOnBox" target="_blank" class="btn" style="background:#FF0000; color:white; padding:10px 20px; text-decoration:none; border-radius:5px;">View All on YouTube</a>
+            </div>
         </section>
 
     </div>
@@ -161,54 +183,54 @@
     </footer>
 
     <script>
-        // --- 1. BEÁLLÍTÁSOK ---
-        
-        // FONTOS: IDE MÁSOLD BE A SAJÁT YOUTUBE CHANNEL ID-dat! 
-        // (A "UC..." kezdetű kódot)
-        const youtubeChannelId = 'UC_IDE_ÍRD_BE_A_KÓDOT_HA_MEGVAN'; 
-        
-        // DeviantArt felhasználónév (ez elvileg jó)
+        // BEÁLLÍTÁSOK (Már beírtam neked a jó adatokat!)
+        const youtubeChannelId = 'UCwcdMvZuol3kGvJR-Pu534A'; 
         const deviantArtUser = 'soniconbox'; 
 
         // ---------------------------------------------------------
 
-        // YouTube Betöltő Funkció
         async function loadYouTube() {
             const container = document.getElementById('youtube-gallery');
-            // Ha nincs megadva az ID, ne csináljon semmit, vagy használjon egy teszt csatornát
-            const finalId = (youtubeChannelId === 'UCwcdMvZuol3kGvJR-Pu534A') ? 'UC-lHJZR3Gqxm24_Vd_AJ5Yw' : youtubeChannelId; // Alapértelmezett: PewDiePie (csak tesztnek, ha elfelejted átírni)
-
-            const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${finalId}`;
+            // RSS konvertáló API használata
+            const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`;
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
             try {
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
-                if (data.items) {
-                    container.innerHTML = ''; // "Loading" szöveg törlése
-                    // Csak az első 6 videót töltjük be (hogy ne legyen lassú az oldal)
+                if (data.status === 'ok' && data.items.length > 0) {
+                    container.innerHTML = ''; 
                     data.items.slice(0, 6).forEach(item => {
-                        // Videó ID kinyerése a linkből
-                        const videoId = item.link.split('v=')[1];
-                        const html = `
-                            <div class="video-wrapper">
-                                <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
-                            </div>
-                        `;
-                        container.innerHTML += html;
+                        // Videó ID kinyerése
+                        let videoId = '';
+                        if (item.guid && item.guid.includes('video:')) {
+                             videoId = item.guid.split(':')[2];
+                        } else {
+                             const urlParts = item.link.split('v=');
+                             videoId = urlParts.length > 1 ? urlParts[1] : '';
+                        }
+
+                        if(videoId) {
+                            const html = `
+                                <div class="video-wrapper">
+                                    <iframe src="https://www.youtube.com/embed/${videoId}" allowfullscreen></iframe>
+                                </div>
+                            `;
+                            container.innerHTML += html;
+                        }
                     });
+                } else {
+                    throw new Error("No items found");
                 }
             } catch (error) {
-                container.innerHTML = '<p>Error loading videos.</p>';
-                console.error(error);
+                console.error("YouTube Error:", error);
+                container.innerHTML = '<p class="error-message">Could not load videos automatically. Please click the button below.</p>';
             }
         }
 
-        // DeviantArt Betöltő Funkció
         async function loadDeviantArt() {
             const container = document.getElementById('deviantart-gallery');
-            // RSS Feed a Gallery-re
             const rssUrl = `https://backend.deviantart.com/rss.xml?q=gallery%3A${deviantArtUser}`;
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
@@ -216,31 +238,36 @@
                 const response = await fetch(apiUrl);
                 const data = await response.json();
 
-                if (data.items) {
+                if (data.status === 'ok' && data.items.length > 0) {
                     container.innerHTML = '';
-                    // Az első 6-8 képet töltjük be
                     data.items.slice(0, 8).forEach(item => {
-                        // Kép url keresése (néha thumbnail, néha enclosure)
-                        const imgUrl = item.thumbnail || item.enclosure.link;
+                        // Kép url keresése (thumbnail vagy fő kép)
+                        const imgUrl = item.thumbnail || (item.enclosure ? item.enclosure.link : '');
                         
-                        const html = `
-                            <a href="${item.link}" target="_blank" class="art-card" style="text-decoration:none; color:#333;">
-                                <img src="${imgUrl}" alt="${item.title}">
-                                <div class="art-title">${item.title}</div>
-                            </a>
-                        `;
-                        container.innerHTML += html;
+                        if(imgUrl) {
+                            const html = `
+                                <a href="${item.link}" target="_blank" class="art-card">
+                                    <img src="${imgUrl}" alt="${item.title}">
+                                    <div class="art-title">${item.title}</div>
+                                </a>
+                            `;
+                            container.innerHTML += html;
+                        }
                     });
+                } else {
+                     throw new Error("No items found");
                 }
             } catch (error) {
-                container.innerHTML = '<p>Error loading artwork.</p>';
-                console.error(error);
+                console.error("DeviantArt Error:", error);
+                container.innerHTML = '<p class="error-message">Could not load artwork automatically. Please click the button below.</p>';
             }
         }
 
-        // Indítás
-        loadYouTube();
-        loadDeviantArt();
+        // Késleltetett indítás, hogy biztos betöltsön az oldal
+        document.addEventListener('DOMContentLoaded', () => {
+            loadYouTube();
+            loadDeviantArt();
+        });
 
     </script>
 
