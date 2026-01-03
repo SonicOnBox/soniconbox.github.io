@@ -2,19 +2,115 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Az én GitHub oldalam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Az Én Weboldalam</title>
     <style>
+        /* Alap beállítások */
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f4;
         }
-        h1 { color: #333; }
+
+        /* Fejléc stílusok */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        header h1 { margin: 0; font-size: 2.5rem; }
+        header p { font-size: 1.2rem; opacity: 0.8; }
+
+        /* Fő tartalom */
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* Profilkép keret */
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%; /* Ez csinál kört a képből */
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 20px auto;
+            border: 5px solid #ecf0f1;
+        }
+
+        /* Gombok és linkek */
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #2980b9; }
+
+        /* Szakaszok */
+        section { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        section:last-child { border-bottom: none; }
+        h2 { color: #2c3e50; }
+
+        /* Lábléc */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
-    <h1>Szia! Ez az első weboldalam a GitHubon.</h1>
-    <p>Köszönöm, hogy benéztél!</p>
+
+    <header>
+        <h1>Üdvözöllek az oldalamon!</h1>
+        <p>Webfejlesztő | Hobbista | GitHub Felhasználó</p>
+    </header>
+
+    <div class="container">
+        <img src="https://via.placeholder.com/150" alt="Profilkép" class="profile-img">
+
+        <section>
+            <h2>Rólam</h2>
+            <p>Szia! Ez itt a bemutatkozó szövegem helye. Ide írhatsz arról, hogy mivel foglalkozol, mik a hobbijaid, és miért hoztad létre ezt az oldalt.</p>
+            <p>A GitHub Pages segítségével ez az oldal teljesen ingyenesen fut.</p>
+        </section>
+
+        <section>
+            <h2>Projektjeim</h2>
+            <ul>
+                <li><strong>Első weboldal:</strong> Amit éppen most nézel.</li>
+                <li><strong>Második projekt:</strong> Ide írhatsz jövőbeli terveket.</li>
+                <li><strong>Hobbik:</strong> Fotózás, túrázás, programozás.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Kapcsolat</h2>
+            <p>Ha szeretnél velem kapcsolatba lépni, itt megtalálsz:</p>
+            <a href="https://github.com/" target="_blank" class="btn">GitHub Profilom</a>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Minden jog fenntartva.</p>
+    </footer>
+
 </body>
 </html>
