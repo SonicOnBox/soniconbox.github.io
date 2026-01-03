@@ -17,15 +17,13 @@
 
         /* --- HEADER BANNER SETTINGS --- */
         header {
-            /* Ez a sor felel a bannerért.
-               Van rajta egy sötét átmenet (rgba 0,0,0,0.6), hogy a szöveg olvasható legyen.
-               A 'url(...)' részbe kerül a kép linkje. Most egy helykitöltő van ott.
-            */
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://via.placeholder.com/1200x400');
-            background-size: cover; /* Ensures the image covers the whole area */
-            background-position: center; /* Centers the image */
+            /* Banner image - change 'banner.jpg' if needed */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('banner.jpg'); 
+            background-color: #2c3e50; /* Fallback color */
+            background-size: cover;
+            background-position: center;
             color: white;
-            padding: 5rem 0; /* Taller padding for a bigger banner look */
+            padding: 5rem 0;
             text-align: center;
         }
 
@@ -35,13 +33,13 @@
         /* Main Content Container */
         .container {
             width: 80%;
-            max-width: 800px;
-            margin: -50px auto 20px auto; /* Negative top margin pulls it up into the banner */
+            max-width: 900px;
+            margin: -50px auto 20px auto;
             background: white;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            position: relative; /* Needed for the overlap effect */
+            position: relative;
         }
 
         /* Profile Image */
@@ -52,8 +50,9 @@
             object-fit: cover;
             display: block;
             margin: 0 auto 20px auto;
-            border: 5px solid white; /* White border looks better overlapping the banner */
+            border: 5px solid white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            background-color: #ddd;
         }
 
         /* Buttons */
@@ -69,15 +68,50 @@
         }
         .btn:hover { opacity: 0.8; }
 
-        /* Social Media Specific Colors */
+        /* Social Media Colors */
         .btn-youtube { background-color: #FF0000; }
         .btn-deviantart { background-color: #05CC47; }
         .btn-bluesky { background-color: #0085ff; }
 
+        /* --- GALLERY STYLES --- */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 200px; /* Uniform height */
+            object-fit: cover; 
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05); /* Zoom effect */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Category Label Style */
+        .category-label {
+            background-color: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
         /* Sections */
-        section { margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        section { margin-bottom: 40px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
         section:last-child { border-bottom: none; }
-        h2 { color: #2c3e50; }
+        h2 { color: #2c3e50; border-left: 5px solid #3498db; padding-left: 10px; }
 
         /* Footer */
         footer {
@@ -97,20 +131,45 @@
     </header>
 
     <div class="container">
-        <img src="profil.jpg" alt="Profile Picture" class="profile-img">
+        <img src="profil.jpg" onerror="this.src="profil.jpg" alt="Profile Picture" class="profile-img">
 
         <section>
             <h2>About Me</h2>
-            <p>Welcome to my personal portfolio! I am passionate about creating content, 3D modelling, design, and modding. Here you can connect with me and follow my latest work across various platforms.</p>
+            <p>Welcome to my personal portfolio! I am passionate about creating content, 3D modelling, design, and modding. Below you can see my work categorized by type.</p>
         </section>
 
         <section>
-            <h2>Where to find my work</h2>
-            <ul>
-                <li><strong>YouTube:</strong> Videos, showcases, and content creation.</li>
-                <li><strong>DeviantArt:</strong> Designs, renders, and artistic projects.</li>
-                <li><strong>BlueSky:</strong> Social updates and community interaction.</li>
-            </ul>
+            <h2>3D Models Showcase</h2>
+            <p>High-quality renders and character designs.</p>
+            
+            <div class="gallery">
+                <a href="https://www.deviantart.com/soniconbox" target="_blank">
+                    <img src="model1.jpg" onerror="this.src='https://via.placeholder.com/300?text=Model+1'" alt="3D Model 1">
+                </a>
+
+                <a href="https://www.deviantart.com/soniconbox" target="_blank">
+                    <img src="model2.jpg" onerror="this.src='https://via.placeholder.com/300?text=Model+2'" alt="3D Model 2">
+                </a>
+                
+                 <a href="https://www.deviantart.com/soniconbox" target="_blank">
+                    <img src="model3.jpg" onerror="this.src='https://via.placeholder.com/300?text=Model+3'" alt="3D Model 3">
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Game Mods</h2>
+            <p>Modifications and custom content for games.</p>
+            
+            <div class="gallery">
+                <a href="https://www.youtube.com/@SonicOnBox" target="_blank">
+                    <img src="mod1.jpg" onerror="this.src='https://via.placeholder.com/300?text=Game+Mod+1'" alt="Game Mod 1">
+                </a>
+
+                <a href="https://www.youtube.com/@SonicOnBox" target="_blank">
+                    <img src="mod2.jpg" onerror="this.src='https://via.placeholder.com/300?text=Game+Mod+2'" alt="Game Mod 2">
+                </a>
+            </div>
         </section>
 
         <section>
