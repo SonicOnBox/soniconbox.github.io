@@ -76,6 +76,8 @@
             display: block;
             text-decoration: none;
             color: #333;
+            position: relative;
+            background-color: #eee; /* Szürke háttér amíg tölt */
         }
         .art-card:hover { transform: scale(1.03); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         
@@ -121,13 +123,16 @@
             text-align: center; 
             color: #777; 
             font-style: italic; 
-            grid-column: 1 / -1; /* Középre igazítás */
+            grid-column: 1 / -1; 
         }
 
         .error-message {
-            color: red;
+            color: #e74c3c;
             text-align: center;
             grid-column: 1 / -1;
+            background: #fadbd8;
+            padding: 10px;
+            border-radius: 5px;
         }
 
         footer {
@@ -183,7 +188,7 @@
     </footer>
 
     <script>
-        // BEÁLLÍTÁSOK (Már beírtam neked a jó adatokat!)
+        // ADATOK
         const youtubeChannelId = 'UCwcdMvZuol3kGvJR-Pu534A'; 
         const deviantArtUser = 'soniconbox'; 
 
@@ -191,7 +196,6 @@
 
         async function loadYouTube() {
             const container = document.getElementById('youtube-gallery');
-            // RSS konvertáló API használata
             const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`;
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
@@ -202,7 +206,6 @@
                 if (data.status === 'ok' && data.items.length > 0) {
                     container.innerHTML = ''; 
                     data.items.slice(0, 6).forEach(item => {
-                        // Videó ID kinyerése
                         let videoId = '';
                         if (item.guid && item.guid.includes('video:')) {
                              videoId = item.guid.split(':')[2];
@@ -225,13 +228,14 @@
                 }
             } catch (error) {
                 console.error("YouTube Error:", error);
-                container.innerHTML = '<p class="error-message">Could not load videos automatically. Please click the button below.</p>';
+                container.innerHTML = '<p class="error-message">Could not load videos automatically.</p>';
             }
         }
 
         async function loadDeviantArt() {
             const container = document.getElementById('deviantart-gallery');
-            const rssUrl = `https://backend.deviantart.com/rss.xml?q=gallery%3A${deviantArtUser}`;
+            // MÓDOSÍTÁS: 'gallery' helyett 'by' használata, ez néha stabilabb
+            const rssUrl = `https://backend.deviantart.com/rss.xml?q=by%3A${deviantArtUser}`;
             const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
 
             try {
@@ -241,13 +245,29 @@
                 if (data.status === 'ok' && data.items.length > 0) {
                     container.innerHTML = '';
                     data.items.slice(0, 8).forEach(item => {
-                        // Kép url keresése (thumbnail vagy fő kép)
-                        const imgUrl = item.thumbnail || (item.enclosure ? item.enclosure.link : '');
+                        // KÉPKERESÉS JAVÍTÁSA:
+                        // 1. Próbáljuk a thumbnailt
+                        // 2. Próbáljuk az enclosure linket
+                        // 3. Ha nincs, megpróbáljuk a leírásból kinyerni az src-t
+                        let imgUrl = item.thumbnail;
                         
+                        if (!imgUrl && item.enclosure && item.enclosure.link) {
+                            imgUrl = item.enclosure.link;
+                        }
+
+                        // Végső próba: Regex keresés a leírásban, ha az RSS HTML-t küld
+                        if (!imgUrl && item.description) {
+                            const imgMatch = item.description.match(/src="([^"]+)"/);
+                            if (imgMatch && imgMatch[1]) {
+                                imgUrl = imgMatch[1];
+                            }
+                        }
+                        
+                        // Csak akkor tesszük ki, ha találtunk képet
                         if(imgUrl) {
                             const html = `
                                 <a href="${item.link}" target="_blank" class="art-card">
-                                    <img src="${imgUrl}" alt="${item.title}">
+                                    <img src="${imgUrl}" alt="${item.title}" onerror="this.style.display='none'">
                                     <div class="art-title">${item.title}</div>
                                 </a>
                             `;
@@ -255,15 +275,21 @@
                         }
                     });
                 } else {
-                     throw new Error("No items found");
+                     // Ha üres vagy hiba van
+                     throw new Error("DeviantArt feed empty or blocked");
                 }
             } catch (error) {
                 console.error("DeviantArt Error:", error);
-                container.innerHTML = '<p class="error-message">Could not load artwork automatically. Please click the button below.</p>';
+                // Barátságosabb hibaüzenet
+                container.innerHTML = `
+                    <div class="error-message">
+                        DeviantArt security is currently blocking the automatic feed.<br>
+                        Please click the green button below to see my gallery!
+                    </div>
+                `;
             }
         }
 
-        // Késleltetett indítás, hogy biztos betöltsön az oldal
         document.addEventListener('DOMContentLoaded', () => {
             loadYouTube();
             loadDeviantArt();
