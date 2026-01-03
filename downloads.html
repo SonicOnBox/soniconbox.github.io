@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonicOnBox - Mod Downloads</title>
+    <style>
+        /* --- ALAP BEÁLLÍTÁSOK --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('banner.jpg'); 
+            background-color: #2c3e50;
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 2.5rem; }
+
+        /* --- MENÜ --- */
+        .nav-bar {
+            background-color: #333;
+            text-align: center;
+            padding: 15px 0;
+            position: sticky; /* Hogy görgetésnél ott maradjon felül (opcionális) */
+            top: 0;
+            z-index: 100;
+        }
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0 15px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .nav-bar a:hover { background-color: #555; }
+        .nav-bar a.active { background-color: #3498db; }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        /* --- MOD KÁRTYA STÍLUS --- */
+        .mod-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 40px; /* Távolság a modok között */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mod-header {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .mod-title { font-size: 1.8rem; color: #2c3e50; margin: 0; }
+        .mod-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; vertical-align: middle; margin-left: 10px;}
+
+        .mod-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .mod-info { flex: 1; min-width: 300px; }
+        .mod-previews { flex: 1; min-width: 300px; }
+
+        /* Letöltés gomb */
+        .download-btn {
+            display: inline-block;
+            background-color: #27ae60; /* Zöld */
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .download-btn:hover {
+            background-color: #219150;
+            transform: translateY(-2px);
+        }
+
+        /* Mod Képgaléria (Bélyegképek) */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        .preview-grid img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .preview-grid img:hover {
+            border-color: #3498db;
+            opacity: 0.8;
+        }
+
+        /* --- LIGHTBOX (Nagyított kép ablak) --- */
+        .lightbox {
+            display: none; /* Alapból rejtett */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border: 5px solid white;
+            border-radius: 5px;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mod Downloads</h1>
+    </header>
+
+    <div class="nav-bar">
+        <a href="index.html">Home</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="downloads.html" class="active">Mod Download</a>
+    </div>
+
+    <div class="container">
+        
+        <p style="text-align:center; margin-bottom:40px; font-size:1.1rem;">
+            Welcome to the download center! Click on the images to see what the mod contains.
+        </p>
+
+        <div class="mod-card">
+            <div class="mod-header">
+                <span class="mod-title">Super Sonic Custom Skin</span>
+                <span class="mod-version">v1.0</span>
+            </div>
+            
+            <div class="mod-content">
+                <div class="mod-info">
+                    <p><strong>Description:</strong></p>
+                    <p>This is a custom skin mod that changes the default appearance. Includes new textures, custom animations, and sound effects.</p>
+                    
+                    <p><strong>Features:</strong></p>
+                    <ul>
+                        <li>High Resolution Textures</li>
+                        <li>New Idle Animation</li>
+                        <li>Custom Voice Lines</li>
+                    </ul>
+
+                    <a href="https://drive.google.com/..." target="_blank" class="download-btn">
+                        Download via Google Drive
+                    </a>
+                </div>
+
+                <div class="mod-previews">
+                    <p><strong>Preview Images (Click to enlarge):</strong></p>
+                    <div class="preview-grid">
+                        <img src="mod1_kep1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        <img src="mod1_kep2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        <img src="mod1_kep3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        <img src="mod1_kep4.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mod-card">
+            <div class="mod-header">
+                <span class="mod-title">Another Awesome Mod</span>
+                <span class="mod-version">v2.1</span>
+            </div>
+            
+            <div class="mod-content">
+                <div class="mod-info">
+                    <p><strong>Description:</strong></p>
+                    <p>Description of your second mod goes here. Explain why it is cool.</p>
+                    
+                    <a href="https://drive.google.com/..." target="_blank" class="download-btn">
+                        Download via Google Drive
+                    </a>
+                </div>
+
+                <div class="mod-previews">
+                    <p><strong>Previews:</strong></p>
+                    <div class="preview-grid">
+                        <img src="mod2_kep1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        <img src="mod2_kep2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2024 SonicOnBox. All rights reserved.</p>
+    </footer>
+
+    <div id="myLightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="close-btn">&times;</span>
+        <img id="lightboxImg" src="">
+    </div>
+
+    <script>
+        // Ez a kis program csinálja a kép nagyítást
+        function openLightbox(element) {
+            var lightbox = document.getElementById("myLightbox");
+            var lightboxImg = document.getElementById("lightboxImg");
+            
+            lightbox.style.display = "flex"; // Megjelenítés
+            lightboxImg.src = element.src;   // A kattintott kép betöltése
+        }
+
+        function closeLightbox() {
+            document.getElementById("myLightbox").style.display = "none";
+        }
+    </script>
+
+</body>
+</html>
