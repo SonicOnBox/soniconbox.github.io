@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>SonicOnBox - Downloading...</title>
-    <script src="https://cdn.jsdelivr.net/npm/counterapi/dist/counter.browser.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -61,34 +60,40 @@
 
     <script>
         window.onload = function() {
+            // 1. Adatok kinyerése a linkből (Pl: ?id=metal_sonic&link=drive...)
             const urlParams = new URLSearchParams(window.location.search);
             const targetUrl = urlParams.get('link');
+            // Ha nincs ID megadva, akkor "unknown"-t használunk
             const modId = urlParams.get('id') || 'unknown_mod'; 
-            
-            // Inicializálás a te névtereddel
-            const counter = new Counter({ version: 'v1', namespace: 'soniconbox' });
 
             if (targetUrl) {
                 document.getElementById('manualLink').href = targetUrl;
 
-                // Számláló növelése a hivatalos módszerrel
-                counter.up(modId)
-                    .then(response => {
-                        document.getElementById('counterDisplay').innerText = `Total Downloads: ${response.value}`;
-                        // Sikeres számlálás után átirányítás
-                        setTimeout(() => { window.location.href = targetUrl; }, 2000);
+                // 2. SZÁMLÁLÓ NÖVELÉSE ÉS LEKÉRÉSE (CounterAPI)
+                // A 'soniconbox' a névterünk, a 'modId' pedig a konkrét mod neve
+                const apiUrl = `https://api.counterapi.dev/v1/soniconbox/${modId}/up`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Kiírjuk a számot
+                        document.getElementById('counterDisplay').innerText = `Total Downloads: ${data.count}`;
                     })
                     .catch(err => {
                         console.error("Counter Error", err);
-                        document.getElementById('counterDisplay').innerText = "Starting download...";
-                        // Hiba esetén is átirányítunk 3 másodperc után
-                        setTimeout(() => { window.location.href = targetUrl; }, 3000);
+                        document.getElementById('counterDisplay').innerText = "Download starting...";
                     });
+
+                // 3. Átirányítás 3 másodperc múlva
+                setTimeout(function(){
+                    window.location.href = targetUrl;
+                }, 3000);
 
             } else {
                 document.body.innerHTML = "<h1>Error: No download link provided.</h1>";
             }
         };
     </script>
+
 </body>
 </html>
