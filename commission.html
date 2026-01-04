@@ -170,6 +170,35 @@
                 </div>
             </div>
 
+            <div class="work-card" data-game="generations">
+                <div class="work-header">
+                    <span class="work-title">Super Saiyan Sonic Generations Mod</span>
+                    <span class="work-version">v1.0</span>
+                    <span class="game-tag">Sonic Generations</span>
+                </div>
+                
+                <div class="work-content">
+                    <div class="work-info">
+                        <p><strong>Description:</strong></p>
+                        <p>This is my second OC character and my second mod for the 2011 game Sonic Generations, and I’m excited to share it with you all!</p>
+                        
+                        <a href="redirect.html?id=super_god_generations&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1D4h0awh38z-MtjIZavONbYdsdkGe37Dk%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
+                            Download
+                        </a>
+                    </div>
+
+                    <div class="work-previews">
+                        <p><strong>Previews:</strong></p>
+                        <div class="preview-grid gallery">
+                            <img src="images/god1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/god2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/god3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/god4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -212,7 +241,6 @@
             document.getElementById("lightboxImg").src = currentImages[currentIndex];
         }
 
-        // --- SZŰRÉS ÉS MENÜ LOGIKA ---
         function showSection(sectionId, btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -238,7 +266,6 @@
             }
         }
 
-        // Billentyűzet támogatás (Esc a bezáráshoz, nyilak a lapozáshoz)
         document.addEventListener('keydown', function(e) {
             if (document.getElementById("myLightbox").style.display === "flex") {
                 if (e.key === "Escape") closeLightbox();
