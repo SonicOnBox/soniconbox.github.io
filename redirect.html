@@ -65,7 +65,7 @@
             const targetUrl = urlParams.get('link');
             const modId = urlParams.get('id') || 'unknown_mod'; 
             
-            // Inicializálás
+            // Inicializálás a te névtereddel
             const counter = new Counter({ version: 'v1', namespace: 'soniconbox' });
 
             if (targetUrl) {
@@ -75,12 +75,13 @@
                 counter.up(modId)
                     .then(response => {
                         document.getElementById('counterDisplay').innerText = `Total Downloads: ${response.value}`;
+                        // Sikeres számlálás után átirányítás
                         setTimeout(() => { window.location.href = targetUrl; }, 2000);
                     })
                     .catch(err => {
                         console.error("Counter Error", err);
                         document.getElementById('counterDisplay').innerText = "Starting download...";
-                        // Hiba esetén is továbbengedjük
+                        // Hiba esetén is átirányítunk 3 másodperc után
                         setTimeout(() => { window.location.href = targetUrl; }, 3000);
                     });
 
