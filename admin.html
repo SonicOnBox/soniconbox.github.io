@@ -20,57 +20,55 @@
 
     <div class="container">
         <h1>📊 Auto Mod Tracker</h1>
-        <p>This panel automatically scans your <b>downloads.html</b> for mods.</p>
+        <p>Ez az oldal automatikusan beolvassa a modokat a <b>downloads.html</b> fájlból.</p>
 
         <table>
             <thead>
                 <tr>
-                    <th>Mod Name</th>
+                    <th>Mod Neve</th>
                     <th>ID / Key</th>
-                    <th>Downloads</th>
+                    <th>Letöltések száma</th>
                 </tr>
             </thead>
             <tbody id="statsTable">
-                <tr><td colspan="3" class="loading">Scanning downloads.html...</td></tr>
+                <tr><td colspan="3" class="loading">Keresés...</td></tr>
             </tbody>
         </table>
 
-        <button onclick="scanAndFetch()">🔄 Refresh & Scan All</button>
-        <p style="margin-top: 20px;"><a href="downloads.html" style="color: #bdc3c7; text-decoration: none;">← Back to Site</a></p>
+        <button onclick="scanAndFetch()">🔄 Adatok Frissítése</button>
+        <p style="margin-top: 20px;"><a href="downloads.html" style="color: #bdc3c7; text-decoration: none;">← Vissza az oldalra</a></p>
     </div>
 
     <script>
         async function scanAndFetch() {
             const tableBody = document.getElementById('statsTable');
-            tableBody.innerHTML = "<tr><td colspan='3' class='loading'>Fetching latest data...</td></tr>";
+            tableBody.innerHTML = "<tr><td colspan='3' class='loading'>Adatok lekérése...</td></tr>";
 
             try {
-                // 1. Letöltjük a downloads.html tartalmát
-                const response = await fetch('downloads.html');
+                // Hozzáadunk egy időbélyeget a downloads.html-hez is, hogy ne a régit olvassa be
+                const response = await fetch('downloads.html?t=' + Date.now());
                 const htmlText = await response.text();
                 
-                // 2. Létrehozunk egy ideiglenes elemet, hogy keresni tudjunk benne
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                // 3. Megkeressük az összes letöltő gombot, amiben benne van az ID
-                const downloadLinks = doc.querySelectorAll('a[href*="redirect.html?id="]');
+                // Megkeressük az összes mod-card elemet
+                const modCards = doc.querySelectorAll('.mod-card');
                 
-                if (downloadLinks.length === 0) {
-                    tableBody.innerHTML = "<tr><td colspan='3'>No mods found in downloads.html.</td></tr>";
+                if (modCards.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='3'>Nem találtam modokat a downloads.html fájlban.</td></tr>";
                     return;
                 }
 
                 let tableHtml = "";
                 
-                // 4. Végigmegyünk a talált linkeken
-                for (let link of downloadLinks) {
-                    const urlParams = new URLSearchParams(link.href.split('?')[1]);
+                for (let card of modCards) {
+                    const linkElement = card.querySelector('a[href*="redirect.html?id="]');
+                    if (!linkElement) continue;
+
+                    const urlParams = new URLSearchParams(linkElement.href.split('?')[1]);
                     const modId = urlParams.get('id');
-                    
-                    // Megkeressük a mod nevét (a kártya címét)
-                    const modCard = link.closest('.mod-card');
-                    const modName = modCard ? modCard.querySelector('.mod-title').innerText : "Unknown Mod";
+                    const modName = card.querySelector('.mod-title').innerText;
 
                     // Lekérjük a számot az API-tól
                     const count = await getCount(modId);
@@ -88,14 +86,14 @@
 
             } catch (error) {
                 console.error(error);
-                tableBody.innerHTML = "<tr><td colspan='3' style='color:red;'>Error scanning downloads.html. Make sure the file exists!</td></tr>";
+                tableBody.innerHTML = "<tr><td colspan='3' style='color:red;'>Hiba történt a fájl beolvasása közben.</td></tr>";
             }
         }
 
         async function getCount(modId) {
             try {
-                // Megpróbáljuk lekérni a számot. Ha hiba (404), akkor 0-t írunk.
-                const res = await fetch(`https://api.counterapi.dev/v1/soniconbox/${modId}`);
+                // A "?t=" + Date.now() kényszeríti az API-t a friss adatra
+                const res = await fetch(`https://api.counterapi.dev/v1/soniconbox/${modId}?t=${Date.now()}`);
                 if (!res.ok) return 0;
                 const data = await res.json();
                 return data.count;
@@ -104,7 +102,6 @@
             }
         }
 
-        // Indítás
         window.onload = scanAndFetch;
     </script>
 </body>
