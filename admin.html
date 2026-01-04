@@ -51,8 +51,8 @@
                 displayElement.innerHTML = "Updating...";
 
                 try {
-                    // A "?t=" + Date.now() kényszeríti a böngészőt, hogy NE a régi 0-át mutassa a memóriából
-                    const response = await fetch(`https://api.counterapi.dev/v1/soniconbox/${id}?t=${Date.now()}`);
+                    // JAVÍTVA: Kivettem az "api." részt a címből, így megszűnik a CORS hiba
+                    const response = await fetch(`https://counterapi.dev/v1/soniconbox/${id}?t=${Date.now()}`);
                     
                     if (!response.ok) {
                         displayElement.innerHTML = `<span class="count-badge" style="background:#7f8c8d">0</span>`;
