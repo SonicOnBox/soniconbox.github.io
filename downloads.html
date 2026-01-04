@@ -5,159 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SonicOnBox - Mod Downloads</title>
     <style>
-        /* --- ALAP BEÁLLÍTÁSOK --- */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            background-color: #f4f4f4;
-        }
-
+        /* --- ALAPOK --- */
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; color: #333; background-color: #f4f4f4; }
+        
         header {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('banner.jpg'); 
-            background-color: #2c3e50;
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('banner.jpg');
+            background-size: cover; background-position: center; color: white; padding: 2rem 0; text-align: center;
         }
         header h1 { margin: 0; font-size: 2.5rem; }
 
-        /* --- MENÜ --- */
-        .nav-bar {
-            background-color: #333;
-            text-align: center;
-            padding: 15px 0;
-            position: sticky; /* Hogy görgetésnél ott maradjon felül (opcionális) */
-            top: 0;
-            z-index: 100;
-        }
-        .nav-bar a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin: 0 15px;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
+        /* --- FELSŐ MENÜ --- */
+        .nav-bar { background-color: #333; text-align: center; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+        .nav-bar a { color: white; text-decoration: none; font-weight: bold; margin: 0 15px; padding: 8px 15px; border-radius: 5px; transition: 0.3s; }
         .nav-bar a:hover { background-color: #555; }
         .nav-bar a.active { background-color: #3498db; }
 
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 30px auto;
-        }
-
-        /* --- MOD KÁRTYA STÍLUS --- */
-        .mod-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            padding: 25px;
-            margin-bottom: 40px; /* Távolság a modok között */
+        /* --- FŐ ELRENDEZÉS (SIDEBAR + CONTENT) --- */
+        .main-layout {
             display: flex;
-            flex-direction: column;
-        }
-
-        .mod-header {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-        .mod-title { font-size: 1.8rem; color: #2c3e50; margin: 0; }
-        .mod-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; vertical-align: middle; margin-left: 10px;}
-
-        .mod-content {
-            display: flex;
-            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 20px auto;
             gap: 20px;
+            padding: 0 20px;
         }
 
+        /* BAL OLDALI MENÜ (Játékok) */
+        .sidebar {
+            flex: 0 0 250px; /* Fix szélesség */
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .sidebar h3 { margin-top: 20px; margin-bottom: 10px; color: #e74c3c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .sidebar h3:first-child { margin-top: 0; }
+
+        .game-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            margin-bottom: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            color: #555;
+            transition: 0.2s;
+        }
+        .game-btn:hover { background: #f0f0f0; color: #333; }
+        .game-btn.active { background: #3498db; color: white; font-weight: bold; }
+        .game-btn-all { font-weight: bold; color: #333; }
+
+        /* JOBB OLDALI TARTALOM (Modok) */
+        .content-area { flex: 1; }
+
+        /* MOBIL NÉZET */
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; box-sizing: border-box; }
+        }
+
+        /* --- MOD KÁRTYA STÍLUS (Ugyanaz mint eddig) --- */
+        .mod-card {
+            background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 30px; display: flex; flex-direction: column;
+            /* Animáció megjelenéskor */
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .mod-header { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
+        .mod-title { font-size: 1.8rem; color: #2c3e50; }
+        .mod-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px;}
+        .game-tag { background: #f1c40f; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; float: right; font-weight: bold;}
+
+        .mod-content { display: flex; flex-wrap: wrap; gap: 20px; }
         .mod-info { flex: 1; min-width: 300px; }
         .mod-previews { flex: 1; min-width: 300px; }
+        
+        .download-btn { display: inline-block; background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .download-btn:hover { background-color: #219150; }
 
-        /* Letöltés gomb */
-        .download-btn {
-            display: inline-block;
-            background-color: #27ae60; /* Zöld */
-            color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-top: 20px;
-            transition: transform 0.2s, background 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-        }
-        .download-btn:hover {
-            background-color: #219150;
-            transform: translateY(-2px);
-        }
+        .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; }
+        .preview-grid img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
+        .preview-grid img:hover { border-color: #3498db; }
 
-        /* Mod Képgaléria (Bélyegképek) */
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-        }
-        .preview-grid img {
-            width: 100%;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        .preview-grid img:hover {
-            border-color: #3498db;
-            opacity: 0.8;
-        }
-
-        /* --- LIGHTBOX (Nagyított kép ablak) --- */
-        .lightbox {
-            display: none; /* Alapból rejtett */
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            justify-content: center;
-            align-items: center;
-        }
-        .lightbox img {
-            max-width: 90%;
-            max-height: 90%;
-            border: 5px solid white;
-            border-radius: 5px;
-        }
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #333;
-            color: white;
-            margin-top: 40px;
-        }
+        /* LIGHTBOX */
+        .lightbox { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
+        .lightbox img { max-width: 90%; max-height: 90%; border: 5px solid white; border-radius: 5px; }
+        .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
+        
+        footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 40px; }
     </style>
 </head>
 <body>
@@ -172,101 +114,84 @@
         <a href="downloads.html" class="active">Mod Download</a>
     </div>
 
-    <div class="container">
+    <div class="main-layout">
         
-        <p style="text-align:center; margin-bottom:40px; font-size:1.1rem;">
-            Welcome to the download center! Click on the images to see what the mod contains.
-        </p>
-
-        <div class="mod-card">
-            <div class="mod-header">
-                <span class="mod-title">Super Sonic Custom Skin</span>
-                <span class="mod-version">v1.0</span>
-            </div>
+        <div class="sidebar">
+            <button class="game-btn game-btn-all active" onclick="filterMods('all')">📂 ALL MODS</button>
             
-            <div class="mod-content">
-                <div class="mod-info">
-                    <p><strong>Description:</strong></p>
-                    <p>This is a custom skin mod that changes the default appearance. Includes new textures, custom animations, and sound effects.</p>
-                    
-                    <p><strong>Features:</strong></p>
-                    <ul>
-                        <li>High Resolution Textures</li>
-                        <li>New Idle Animation</li>
-                        <li>Custom Voice Lines</li>
-                    </ul>
+            <h3>Hedge Engine Games</h3>
+            <button class="game-btn" onclick="filterMods('generations')">Sonic Generations</button>
+            <button class="game-btn" onclick="filterMods('shadow_gen')">Shadow Generations</button>
+            <button class="game-btn" onclick="filterMods('unleashed')">Sonic Unleashed</button>
+            <button class="game-btn" onclick="filterMods('lost_world')">Sonic Lost World</button>
+            <button class="game-btn" onclick="filterMods('forces')">Sonic Forces</button>
+            <button class="game-btn" onclick="filterMods('frontiers')">Sonic Frontiers</button>
+            <button class="game-btn" onclick="filterMods('superstars')">Sonic Superstars</button>
+            <button class="game-btn" onclick="filterMods('colors')">Sonic Colors Ultimate</button>
+            <button class="game-btn" onclick="filterMods('sadx')">Sonic Adventure DX</button>
+            <button class="game-btn" onclick="filterMods('sa2')">Sonic Adventure 2</button>
+            <button class="game-btn" onclick="filterMods('06')">Sonic '06</button>
+            <button class="game-btn" onclick="filterMods('racing')">Sonic Racing Crossworlds</button>
 
-                    <a href="https://drive.google.com/..." target="_blank" class="download-btn">
-                        Download via Google Drive
-                    </a>
-                </div>
-
-                <div class="mod-previews">
-                    <p><strong>Preview Images (Click to enlarge):</strong></p>
-                    <div class="preview-grid">
-                        <img src="mod1_kep1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                        <img src="mod1_kep2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                        <img src="mod1_kep3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                        <img src="mod1_kep4.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                    </div>
-                </div>
-            </div>
+            <h3>Retro Engine Games</h3>
+            <button class="game-btn" onclick="filterMods('mania')">Sonic Mania Plus</button>
+            <button class="game-btn" onclick="filterMods('origins')">Sonic Origins</button>
         </div>
 
-        <div class="mod-card">
-            <div class="mod-header">
-                <span class="mod-title">Another Awesome Mod</span>
-                <span class="mod-version">v2.1</span>
-            </div>
-            
-            <div class="mod-content">
-                <div class="mod-info">
-                    <p><strong>Description:</strong></p>
-                    <p>Coming Soon!</p>
-                    
-                    <a href="https://drive.google.com/..." target="_blank" class="download-btn">
-                        Download via Google Drive
-                    </a>
-                </div>
+        <div class="content-area" id="modContainer">
+            <p id="noModsText" style="display:none; text-align:center; color:#777;">No mods found for this game yet.</p>
 
-                <div class="mod-previews">
-                    <p><strong>Previews:</strong></p>
-                    <div class="preview-grid">
-                        <img src="mod2_kep1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                        <img src="mod2_kep2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                    </div>
-                </div>
             </div>
-        </div>
-
     </div>
 
     <footer>
         <p>&copy; 2024 SonicOnBox. All rights reserved.</p>
-        
-        <a href="https://www.hitwebcounter.com" target="_blank">
-            <img src="https://hitwebcounter.com/counter/counter.php?page=21467292&style=0010&nbdigits=5&type=page&initCount=0" title="Free Tools" Alt="Free Tools"   border="0"
-        </a>
-        
     </footer>
 
-    <div id="myLightbox" class="lightbox" onclick="closeLightbox()">
+    <div id="myLightbox" class="lightbox" onclick="this.style.display='none'">
         <span class="close-btn">&times;</span>
         <img id="lightboxImg" src="">
     </div>
 
     <script>
-        // Ez a kis program csinálja a kép nagyítást
+        // KÉP NAGYÍTÁS
         function openLightbox(element) {
-            var lightbox = document.getElementById("myLightbox");
-            var lightboxImg = document.getElementById("lightboxImg");
-            
-            lightbox.style.display = "flex"; // Megjelenítés
-            lightboxImg.src = element.src;   // A kattintott kép betöltése
+            document.getElementById("myLightbox").style.display = "flex";
+            document.getElementById("lightboxImg").src = element.src;
+            event.stopPropagation(); // Hogy ne záródjon be azonnal
         }
 
-        function closeLightbox() {
-            document.getElementById("myLightbox").style.display = "none";
+        // KATEGÓRIA SZŰRÉS (EZ A LÉNYEG!)
+        function filterMods(gameCategory) {
+            // 1. Gombok színezése
+            const buttons = document.querySelectorAll('.game-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Megkeressük, melyikre kattintottunk (kicsit trükkös, mert az onclick hívja)
+            event.target.classList.add('active');
+
+            // 2. Modok szűrése
+            const mods = document.querySelectorAll('.mod-card');
+            let visibleCount = 0;
+
+            mods.forEach(mod => {
+                // Megnézzük, milyen játékhoz tartozik a mod (data-game attribútum)
+                const modGame = mod.getAttribute('data-game');
+
+                if (gameCategory === 'all' || modGame === gameCategory) {
+                    mod.style.display = 'flex'; // Megjelenítés
+                    visibleCount++;
+                } else {
+                    mod.style.display = 'none'; // Elrejtés
+                }
+            });
+
+            // Ha nincs találat, írjuk ki
+            const noModsText = document.getElementById('noModsText');
+            if (visibleCount === 0) {
+                noModsText.style.display = 'block';
+            } else {
+                noModsText.style.display = 'none';
+            }
         }
     </script>
 
