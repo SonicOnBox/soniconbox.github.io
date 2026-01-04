@@ -60,40 +60,40 @@
 
     <script>
         window.onload = function() {
-            // 1. Adatok kinyerése a linkből (Pl: ?id=metal_sonic&link=drive...)
             const urlParams = new URLSearchParams(window.location.search);
             const targetUrl = urlParams.get('link');
-            // Ha nincs ID megadva, akkor "unknown"-t használunk
             const modId = urlParams.get('id') || 'unknown_mod'; 
 
             if (targetUrl) {
                 document.getElementById('manualLink').href = targetUrl;
 
-                // 2. SZÁMLÁLÓ NÖVELÉSE ÉS LEKÉRÉSE (CounterAPI)
-                // A 'soniconbox' a névterünk, a 'modId' pedig a konkrét mod neve
+                // SZÁMLÁLÓ NÖVELÉSE (CounterAPI)
                 const apiUrl = `https://api.counterapi.dev/v1/soniconbox/${modId}/up`;
 
                 fetch(apiUrl)
                     .then(response => response.json())
                     .then(data => {
-                        // Kiírjuk a számot
+                        // Kiírjuk a frissített számot
                         document.getElementById('counterDisplay').innerText = `Total Downloads: ${data.count}`;
+                        
+                        // Csak a sikeres válasz után várunk 2 másodpercet és átirányítunk
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 2000);
                     })
                     .catch(err => {
                         console.error("Counter Error", err);
                         document.getElementById('counterDisplay').innerText = "Download starting...";
+                        // Hiba esetén is átirányítunk 3 másodperc után, hogy a felhasználó ne akadjon el
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 3000);
                     });
-
-                // 3. Átirányítás 3 másodperc múlva
-                setTimeout(function(){
-                    window.location.href = targetUrl;
-                }, 3000);
 
             } else {
                 document.body.innerHTML = "<h1>Error: No download link provided.</h1>";
             }
         };
     </script>
-
 </body>
 </html>
