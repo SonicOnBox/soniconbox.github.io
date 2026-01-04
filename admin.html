@@ -2,82 +2,110 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SonicOnBox - Mod Statistics</title>
+    <title>SonicOnBox - Auto Admin Panel</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; padding: 40px; text-align: center; }
-        .container { max-width: 800px; margin: 0 auto; background: #2c3e50; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: #f1c40f; margin-bottom: 30px; }
+        .container { max-width: 900px; margin: 0 auto; background: #2c3e50; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #f1c40f; margin-bottom: 10px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #34495e; border-radius: 10px; overflow: hidden; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #2c3e50; }
         th { background-color: #e67e22; color: white; }
-        tr:hover { background-color: #3d566e; }
-        .count-badge { background: #27ae60; padding: 5px 12px; border-radius: 20px; font-weight: bold; }
-        button { background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px; }
-        button:hover { background: #2980b9; }
+        .count-badge { background: #27ae60; padding: 5px 12px; border-radius: 20px; font-weight: bold; min-width: 30px; display: inline-block; text-align: center; }
+        .loading { color: #bdc3c7; font-style: italic; }
+        button { background: #3498db; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        button:hover { background: #2980b9; transform: scale(1.05); }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>📊 Mod Download Statistics</h1>
-        <p>This is your private dashboard to track mod popularity.</p>
+        <h1>📊 Auto Mod Tracker</h1>
+        <p>This panel automatically scans your <b>downloads.html</b> for mods.</p>
 
         <table>
             <thead>
                 <tr>
                     <th>Mod Name</th>
-                    <th>Mod ID (Key)</th>
-                    <th>Total Downloads</th>
+                    <th>ID / Key</th>
+                    <th>Downloads</th>
                 </tr>
             </thead>
             <tbody id="statsTable">
-                </tbody>
+                <tr><td colspan="3" class="loading">Scanning downloads.html...</td></tr>
+            </tbody>
         </table>
 
-        <button onclick="fetchAllStats()">🔄 Refresh Data</button>
+        <button onclick="scanAndFetch()">🔄 Refresh & Scan All</button>
         <p style="margin-top: 20px;"><a href="downloads.html" style="color: #bdc3c7; text-decoration: none;">← Back to Site</a></p>
     </div>
 
     <script>
-        // --- IDE KELL BEÍRNOD AZ ÚJ MODOKAT ---
-        const myMods = [
-            { name: "Steampunk Rouge Outfit", id: "steampunk_rouge" },
-            // Ha lesz új modod, csak add hozzá így:
-            // { name: "Másik Mod Neve", id: "masik_id" }
-        ];
-
-        async function fetchCount(modId) {
-            try {
-                const response = await fetch(`https://api.counterapi.dev/v1/soniconbox/${modId}`);
-                const data = await response.json();
-                return data.count || 0;
-            } catch (error) {
-                return "Error";
-            }
-        }
-
-        async function fetchAllStats() {
+        async function scanAndFetch() {
             const tableBody = document.getElementById('statsTable');
-            tableBody.innerHTML = "<tr><td colspan='3'>Loading data...</td></tr>";
-            
-            let html = "";
-            
-            for (const mod of myMods) {
-                const count = await fetchCount(mod.id);
-                html += `
-                    <tr>
-                        <td><strong>${mod.name}</strong></td>
-                        <td><code>${mod.id}</code></td>
-                        <td><span class="count-badge">${count}</span></td>
-                    </tr>
-                `;
+            tableBody.innerHTML = "<tr><td colspan='3' class='loading'>Fetching latest data...</td></tr>";
+
+            try {
+                // 1. Letöltjük a downloads.html tartalmát
+                const response = await fetch('downloads.html');
+                const htmlText = await response.text();
+                
+                // 2. Létrehozunk egy ideiglenes elemet, hogy keresni tudjunk benne
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlText, 'text/html');
+                
+                // 3. Megkeressük az összes letöltő gombot, amiben benne van az ID
+                const downloadLinks = doc.querySelectorAll('a[href*="redirect.html?id="]');
+                
+                if (downloadLinks.length === 0) {
+                    tableBody.innerHTML = "<tr><td colspan='3'>No mods found in downloads.html.</td></tr>";
+                    return;
+                }
+
+                let tableHtml = "";
+                
+                // 4. Végigmegyünk a talált linkeken
+                for (let link of downloadLinks) {
+                    const urlParams = new URLSearchParams(link.href.split('?')[1]);
+                    const modId = urlParams.get('id');
+                    
+                    // Megkeressük a mod nevét (a kártya címét)
+                    const modCard = link.closest('.mod-card');
+                    const modName = modCard ? modCard.querySelector('.mod-title').innerText : "Unknown Mod";
+
+                    // Lekérjük a számot az API-tól
+                    const count = await getCount(modId);
+                    
+                    tableHtml += `
+                        <tr>
+                            <td><strong>${modName}</strong></td>
+                            <td><code>${modId}</code></td>
+                            <td><span class="count-badge">${count}</span></td>
+                        </tr>
+                    `;
+                }
+                
+                tableBody.innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error(error);
+                tableBody.innerHTML = "<tr><td colspan='3' style='color:red;'>Error scanning downloads.html. Make sure the file exists!</td></tr>";
             }
-            
-            tableBody.innerHTML = html;
         }
 
-        // Betöltéskor azonnal indul
-        window.onload = fetchAllStats;
+        async function getCount(modId) {
+            try {
+                // Megpróbáljuk lekérni a számot. Ha hiba (404), akkor 0-t írunk.
+                const res = await fetch(`https://api.counterapi.dev/v1/soniconbox/${modId}`);
+                if (!res.ok) return 0;
+                const data = await res.json();
+                return data.count;
+            } catch (e) {
+                return 0;
+            }
+        }
+
+        // Indítás
+        window.onload = scanAndFetch;
     </script>
 </body>
 </html>
