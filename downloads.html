@@ -9,7 +9,7 @@
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; color: #333; background-color: #f4f4f4; }
         
         header {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('banner.jpg');
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/banner.jpg');
             background-size: cover; background-position: center; color: white; padding: 2rem 0; text-align: center;
         }
         header h1 { margin: 0; font-size: 2.5rem; }
@@ -29,7 +29,7 @@
             padding: 0 20px;
         }
 
-        /* BAL OLDALI MENÜ (Játékok) */
+        /* BAL OLDALI MENÜ */
         .sidebar {
             flex: 0 0 250px;
             background: white;
@@ -43,33 +43,21 @@
         .sidebar h3:first-child { margin-top: 0; }
 
         .game-btn {
-            display: block;
-            width: 100%;
-            text-align: left;
-            padding: 10px;
-            margin-bottom: 5px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 0.95rem;
-            color: #555;
-            transition: 0.2s;
+            display: block; width: 100%; text-align: left; padding: 10px; margin-bottom: 5px;
+            background: none; border: none; cursor: pointer; border-radius: 5px; font-size: 0.95rem;
+            color: #555; transition: 0.2s;
         }
         .game-btn:hover { background: #f0f0f0; color: #333; }
         .game-btn.active { background: #3498db; color: white; font-weight: bold; }
         .game-btn-all { font-weight: bold; color: #333; }
 
-        /* JOBB OLDALI TARTALOM (Modok) */
         .content-area { flex: 1; }
 
-        /* MOBIL NÉZET */
         @media (max-width: 768px) {
             .main-layout { flex-direction: column; }
             .sidebar { width: 100%; box-sizing: border-box; }
         }
 
-        /* --- MOD KÁRTYA STÍLUS --- */
         .mod-card {
             background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             padding: 25px; margin-bottom: 30px; display: flex; flex-direction: column;
@@ -93,7 +81,6 @@
         .preview-grid img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
         .preview-grid img:hover { border-color: #3498db; }
 
-        /* LIGHTBOX */
         .lightbox { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
         .lightbox img { max-width: 90%; max-height: 90%; border: 5px solid white; border-radius: 5px; }
         .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
@@ -163,10 +150,10 @@
                     <div class="mod-previews">
                         <p><strong>Previews:</strong></p>
                         <div class="preview-grid">
-                            <img src="srouge1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="srouge2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="srouge3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="srouge4.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/srouge1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/srouge2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/srouge3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/srouge4.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
@@ -192,10 +179,10 @@
                     <div class="mod-previews">
                         <p><strong>Previews:</strong></p>
                         <div class="preview-grid">
-                            <img src="statue1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="statue2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="statue3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="statue4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
@@ -221,10 +208,10 @@
                     <div class="mod-previews">
                         <p><strong>Previews:</strong></p>
                         <div class="preview-grid">
-                            <img src="boommap1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="boommap2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="boommap3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="boommap4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
