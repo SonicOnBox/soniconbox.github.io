@@ -5,25 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SonicOnBox - Commissions</title>
     <style>
-        /* Alap stílusok átvétele a downloads.html-ből */
+        /* Alap stílusok átvétele a downloads.html-ből a konzisztencia érdekében */
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; color: #333; background-color: #f4f4f4; }
         
         header {
             background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/banner.jpg');
             background-size: cover; background-position: center; color: white; padding: 2rem 0; text-align: center;
         }
+        header h1 { margin: 0; font-size: 2.5rem; }
 
         .nav-bar { background-color: #333; text-align: center; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
         .nav-bar a { color: white; text-decoration: none; font-weight: bold; margin: 0 15px; padding: 8px 15px; border-radius: 5px; transition: 0.3s; }
         .nav-bar a:hover { background-color: #555; }
         .nav-bar a.active { background-color: #3498db; }
 
-        .container { max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        /* FŐ ELRENDEZÉS */
+        .main-layout {
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        /* OLDALSÁV (SIDEBAR) */
+        .sidebar {
+            flex: 0 0 250px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
         
-        .status-badge { display: inline-block; background: #27ae60; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 20px; }
-        
+        .sidebar h3 { margin-top: 0; margin-bottom: 15px; color: #e74c3c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
+        .menu-btn {
+            display: block; width: 100%; text-align: left; padding: 10px; margin-bottom: 5px;
+            background: none; border: none; cursor: pointer; border-radius: 5px; font-size: 0.95rem;
+            color: #555; transition: 0.2s;
+        }
+        .menu-btn:hover { background: #f0f0f0; color: #333; }
+        .menu-btn.active { background: #3498db; color: white; font-weight: bold; }
+
+        /* TARTALOM TERÜLET */
+        .content-area { flex: 1; }
+
+        .commission-card {
+            background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 25px; margin-bottom: 30px; animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .status-badge { display: inline-block; background: #27ae60; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 15px; font-weight: bold; }
+
         footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 40px; }
+
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; box-sizing: border-box; }
+        }
     </style>
 </head>
 <body>
@@ -39,24 +80,74 @@
         <a href="commission.html" class="active">Commission</a>
     </div>
 
-    <div class="container">
-        <div class="status-badge">Status: Open</div>
-        <h2>Request a Custom Mod</h2>
-        <p>Welcome to my commission page! Here you can request custom Sonic mods or Minecraft maps.</p>
-        
-        <h3>How it works:</h3>
-        <ul>
-            <li>Contact me on Discord or via Social Media.</li>
-            <li>Describe your idea in detail.</li>
-            <li>We discuss the pricing and the deadline.</li>
-        </ul>
+    <div class="main-layout">
+        <div class="sidebar">
+            <h3>Categories</h3>
+            <button class="menu-btn active" onclick="filterCategory('all')">📂 All Info</button>
+            <button class="menu-btn" onclick="filterCategory('my-works')">🎨 My Works</button>
+            <button class="menu-btn" onclick="filterCategory('oc-characters')">👤 OC Characters</button>
+            <button class="menu-btn" onclick="filterCategory('prices')">💰 Prices & Terms</button>
+        </div>
 
-        <p><strong>Note:</strong> I reserve the right to decline requests that are too complex or outside of my current skills.</p>
+        <div class="content-area" id="commissionContainer">
+            
+            <div class="commission-card" data-cat="all">
+                <div class="status-badge">Status: Open</div>
+                <h2>Commission Information</h2>
+                <p>Welcome! Here you can find information about requesting custom mods and characters.</p>
+                <p>Please select a category from the sidebar to see specific details about my previous works or OC guidelines.</p>
+            </div>
+
+            <div class="commission-card" data-cat="my-works" style="display:none;">
+                <h2>My Works</h2>
+                <p>This section showcases the quality and style of my previous projects.</p>
+                <ul>
+                    <li>Custom Sonic Models</li>
+                    <li>Environment Textures</li>
+                    <li>Special Ability Scripts</li>
+                </ul>
+            </div>
+
+            <div class="commission-card" data-cat="oc-characters" style="display:none;">
+                <h2>OC Characters</h2>
+                <p>I can bring your Original Characters to life! I specialize in:</p>
+                <ul>
+                    <li>Sonic Style (Hedgehogs, Foxes, etc.)</li>
+                    <li>Custom Accessories and Outfits</li>
+                    <li>Rigging for Hedge Engine</li>
+                </ul>
+            </div>
+
+            <div class="commission-card" data-cat="prices" style="display:none;">
+                <h2>Prices & Terms</h2>
+                <p>Pricing depends on the complexity of the task.</p>
+                <p>Contact me on Discord for a personal quote!</p>
+            </div>
+
+        </div>
     </div>
 
     <footer>
         <p>&copy; 2026 SonicOnBox. All rights reserved.</p>
     </footer>
 
+    <script>
+        function filterCategory(category) {
+            // Gombok stílusának frissítése
+            const buttons = document.querySelectorAll('.menu-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Kártyák szűrése
+            const cards = document.querySelectorAll('.commission-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-cat') === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
