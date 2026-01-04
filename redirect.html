@@ -68,7 +68,8 @@
                 document.getElementById('manualLink').href = targetUrl;
 
                 // SZÁMLÁLÓ NÖVELÉSE (CounterAPI)
-                const apiUrl = `https://api.counterapi.dev/v1/soniconbox/${modId}/up`;
+                // JAVÍTVA: Itt is a counterapi.dev címet használjuk "api." nélkül
+                const apiUrl = `https://counterapi.dev/v1/soniconbox/${modId}/up`;
 
                 fetch(apiUrl)
                     .then(response => response.json())
