@@ -59,6 +59,24 @@
         .preview-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
         .preview-grid img:hover { transform: scale(1.05); border-color: #3498db; }
 
+        /* --- LIGHTBOX (LAPOZHATÓ) --- */
+        .lightbox { 
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; 
+        }
+        .lightbox img { max-width: 90%; max-height: 80%; border: 5px solid white; border-radius: 5px; }
+        .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
+        
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.2); color: white; border: none;
+            padding: 20px; cursor: pointer; font-size: 24px; border-radius: 50%;
+            transition: 0.3s;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.5); }
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
         footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 40px; }
 
         @media (max-width: 768px) { .main-layout { flex-direction: column; } .sidebar { width: 100%; } }
@@ -142,11 +160,11 @@
 
                     <div class="work-previews">
                         <p><strong>Previews:</strong></p>
-                        <div class="preview-grid">
-                            <img src="images/anu1.png" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/anu2.png" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/anu3.png" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/anu4.png" onerror="this.src='https://via.placeholder.com/150'">
+                        <div class="preview-grid gallery">
+                            <img src="images/anu1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/anu2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/anu3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/anu4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
@@ -155,11 +173,46 @@
         </div>
     </div>
 
+    <div id="myLightbox" class="lightbox">
+        <span class="close-btn" onclick="closeLightbox()">&times;</span>
+        <button class="nav-btn prev" onclick="changeImage(-1)">&#10094;</button>
+        <img id="lightboxImg" src="">
+        <button class="nav-btn next" onclick="changeImage(1)">&#10095;</button>
+    </div>
+
     <footer>
         <p>&copy; 2026 SonicOnBox. All rights reserved.</p>
     </footer>
 
     <script>
+        let currentImages = [];
+        let currentIndex = 0;
+
+        function openLightbox(element) {
+            const gallery = element.closest('.gallery');
+            currentImages = Array.from(gallery.querySelectorAll('img')).map(img => img.src);
+            currentIndex = currentImages.indexOf(element.src);
+            
+            document.getElementById("myLightbox").style.display = "flex";
+            updateLightboxImage();
+        }
+
+        function closeLightbox() {
+            document.getElementById("myLightbox").style.display = "none";
+        }
+
+        function changeImage(step) {
+            currentIndex += step;
+            if (currentIndex >= currentImages.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = currentImages.length - 1;
+            updateLightboxImage();
+        }
+
+        function updateLightboxImage() {
+            document.getElementById("lightboxImg").src = currentImages[currentIndex];
+        }
+
+        // --- SZŰRÉS ÉS MENÜ LOGIKA ---
         function showSection(sectionId, btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -184,6 +237,15 @@
                 works.forEach(w => w.style.display = 'flex');
             }
         }
+
+        // Billentyűzet támogatás (Esc a bezáráshoz, nyilak a lapozáshoz)
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById("myLightbox").style.display === "flex") {
+                if (e.key === "Escape") closeLightbox();
+                if (e.key === "ArrowLeft") changeImage(-1);
+                if (e.key === "ArrowRight") changeImage(1);
+            }
+        });
     </script>
 </body>
 </html>
