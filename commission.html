@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonicOnBox - Commissions & Works</title>
+    <title>SonicOnBox - Commissions & Portfolio</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; color: #333; background-color: #f4f4f4; }
         
@@ -19,7 +19,6 @@
 
         .main-layout { display: flex; max-width: 1200px; margin: 20px auto; gap: 20px; padding: 0 20px; }
 
-        /* SIDEBAR STÍLUS */
         .sidebar { flex: 0 0 280px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); height: fit-content; }
         .sidebar h3 { margin-top: 20px; margin-bottom: 10px; color: #e74c3c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .sidebar h3:first-child { margin-top: 0; }
@@ -32,13 +31,11 @@
         .menu-btn:hover { background: #f0f0f0; color: #333; }
         .menu-btn.active { background: #3498db; color: white; font-weight: bold; }
 
-        /* JÁTÉK LISTA (Alapból rejtve, csak My Works-nél látszik) */
         #gameSubMenu { margin-left: 15px; border-left: 2px solid #eee; padding-left: 10px; display: none; }
         .game-sub-btn { font-size: 0.85rem; padding: 6px 10px; }
 
         .content-area { flex: 1; }
 
-        /* KÁRTYA STÍLUS (Ugyanaz mint a downloads-nál) */
         .work-card {
             background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             padding: 25px; margin-bottom: 30px; display: none; flex-direction: column;
@@ -47,12 +44,20 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .work-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
-        .work-title { font-size: 1.5rem; color: #2c3e50; font-weight: bold; }
-        .game-tag { background: #f1c40f; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; float: right; }
+        .work-title { font-size: 1.5rem; color: #2c3e50; font-weight: bold; display: inline-block; }
+        .work-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px; vertical-align: middle; }
+        .game-tag { background: #f1c40f; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; float: right; font-weight: bold; }
+
+        .work-content { display: flex; flex-wrap: wrap; gap: 20px; }
+        .work-info { flex: 1; min-width: 300px; }
+        .work-previews { flex: 1; min-width: 300px; }
+
+        .download-btn { display: inline-block; background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .download-btn:hover { background-color: #219150; }
 
         .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px; }
-        .preview-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: 0.2s; }
-        .preview-grid img:hover { transform: scale(1.05); }
+        .preview-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
+        .preview-grid img:hover { transform: scale(1.05); border-color: #3498db; }
 
         footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 40px; }
 
@@ -80,7 +85,7 @@
             <button class="menu-btn" onclick="showSection('prices', this)">💰 Prices & Terms</button>
 
             <h3>Portfolio</h3>
-            <button class="menu-btn" onclick="toggleWorks(this)">🎨 My Works (by Game)</button>
+            <button class="menu-btn" onclick="toggleWorks(this)">🎨 My Works (Sonic Games)</button>
             <div id="gameSubMenu">
                 <button class="menu-btn game-sub-btn" onclick="filterWorks('generations', this)">Sonic Generations</button>
                 <button class="menu-btn game-sub-btn" onclick="filterWorks('shadow_gen', this)">Shadow Generations</button>
@@ -92,8 +97,7 @@
                 <button class="menu-btn game-sub-btn" onclick="filterWorks('colors', this)">Sonic Colors Ultimate</button>
                 <button class="menu-btn game-sub-btn" onclick="filterWorks('sadx', this)">Sonic Adventure DX</button>
                 <button class="menu-btn game-sub-btn" onclick="filterWorks('sa2', this)">Sonic Adventure 2</button>
-                <button class="menu-btn game-sub-btn" onclick="filterWorks('06')">Sonic '06</button>
-                <button class="menu-btn game-sub-btn" onclick="filterWorks('minecraft', this)">Minecraft Maps</button>
+                <button class="menu-btn game-sub-btn" onclick="filterWorks('06', this)">Sonic '06</button>
             </div>
         </div>
 
@@ -115,29 +119,36 @@
                 <ul>
                     <li>Simple Character Swap: $XX</li>
                     <li>Full OC Creation: $XX</li>
-                    <li>Minecraft Map: $XX</li>
+                    <li>Texture Mod: $XX</li>
                 </ul>
             </div>
 
             <div class="work-card" data-game="generations">
                 <div class="work-header">
-                    <span class="work-title">Custom Super Sonic Texture</span>
+                    <span class="work-title">Anubius the Hedgehog in Sonic Generations Mod</span>
+                    <span class="work-version">v1.0</span>
                     <span class="game-tag">Sonic Generations</span>
                 </div>
-                <p>A custom commission for a client who wanted a more metallic look for Super Sonic.</p>
-                <div class="preview-grid">
-                    <img src="images/portfolio1.jpg" onerror="this.src='https://via.placeholder.com/150'">
-                </div>
-            </div>
+                
+                <div class="work-content">
+                    <div class="work-info">
+                        <p><strong>Description:</strong></p>
+                        <p>This is my first OC character and my first mod for the 2011 game Sonic Generations, and I’m excited to share it with you all!</p>
+                        
+                        <a href="redirect.html?id=anubius_generations&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1eAlVUoyJyG0PJDFgRi4qytHT1pRDIx6H%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
+                            Download
+                        </a>
+                    </div>
 
-            <div class="work-card" data-game="minecraft">
-                <div class="work-header">
-                    <span class="work-title">Adventure Island Map</span>
-                    <span class="game-tag">Minecraft Maps</span>
-                </div>
-                <p>A large scale adventure map with custom statues.</p>
-                <div class="preview-grid">
-                    <img src="images/statue1.png" onerror="this.src='https://via.placeholder.com/150'">
+                    <div class="work-previews">
+                        <p><strong>Previews:</strong></p>
+                        <div class="preview-grid">
+                            <img src="images/anu1.png" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/anu2.png" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/anu3.png" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/anu4.png" onerror="this.src='https://via.placeholder.com/150'">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -150,42 +161,27 @@
 
     <script>
         function showSection(sectionId, btn) {
-            // Menü gombok stílusa
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
-            // Minden elrejtése
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
-            // Almenü elrejtése ha nem My Works
             document.getElementById('gameSubMenu').style.display = 'none';
-
-            // Adott szekció mutatása
             document.getElementById(sectionId).style.display = 'flex';
         }
 
         function toggleWorks(btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
             const subMenu = document.getElementById('gameSubMenu');
             subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
         }
 
         function filterWorks(game, btn) {
-            // Almenü gombok stílusa
             document.querySelectorAll('.game-sub-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            // Minden elrejtése
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
-
-            // Csak az adott játékhoz tartozó kártyák mutatása
             const works = document.querySelectorAll(`.work-card[data-game="${game}"]`);
             if(works.length > 0) {
                 works.forEach(w => w.style.display = 'flex');
-            } else {
-                // Ha nincs munka, mutassunk egy üzenetet (opcionális)
-                console.log("No works found for " + game);
             }
         }
     </script>
