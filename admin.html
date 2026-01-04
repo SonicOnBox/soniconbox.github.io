@@ -54,7 +54,7 @@
                 const displayElement = document.getElementById('count-' + id);
                 displayElement.innerHTML = "Updating...";
 
-                // A hivatalos library használata
+                // A hivatalos library használata (fetch helyett)
                 counter.get(id)
                     .then(response => {
                         displayElement.innerHTML = `<span class="count-badge">${response.value}</span>`;
@@ -68,7 +68,9 @@
             document.getElementById('debug').innerText = "Last update: " + new Date().toLocaleTimeString();
         }
 
+        // Automatikus indítás betöltéskor
         window.onload = updateAll;
+        // 60 másodpercenként automatikusan frissít
         setInterval(updateAll, 60000);
     </script>
 </body>
