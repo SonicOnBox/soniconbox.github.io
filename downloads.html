@@ -31,7 +31,7 @@
 
         /* BAL OLDALI MENÜ (Játékok) */
         .sidebar {
-            flex: 0 0 250px; /* Fix szélesség */
+            flex: 0 0 250px;
             background: white;
             padding: 20px;
             border-radius: 8px;
@@ -69,18 +69,17 @@
             .sidebar { width: 100%; box-sizing: border-box; }
         }
 
-        /* --- MOD KÁRTYA STÍLUS (Ugyanaz mint eddig) --- */
+        /* --- MOD KÁRTYA STÍLUS --- */
         .mod-card {
             background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             padding: 25px; margin-bottom: 30px; display: flex; flex-direction: column;
-            /* Animáció megjelenéskor */
             animation: fadeIn 0.5s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .mod-header { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        .mod-title { font-size: 1.8rem; color: #2c3e50; }
-        .mod-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px;}
+        .mod-title { font-size: 1.8rem; color: #2c3e50; margin: 0; display: inline-block;}
+        .mod-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px; vertical-align: middle;}
         .game-tag { background: #f1c40f; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; float: right; font-weight: bold;}
 
         .mod-content { display: flex; flex-wrap: wrap; gap: 20px; }
@@ -141,6 +140,35 @@
         <div class="content-area" id="modContainer">
             <p id="noModsText" style="display:none; text-align:center; color:#777;">No mods found for this game yet.</p>
 
+            <div class="mod-card" data-game="racing">
+                <div class="mod-header">
+                    <span class="mod-title">Steampunk Rouge Outfit in Crossworlds!</span>
+                    <span class="mod-version">v1.0</span>
+                    <span class="game-tag">Sonic Racing Crossworlds</span>
+                </div>
+                
+                <div class="mod-content">
+                    <div class="mod-info">
+                        <p><strong>Description:</strong></p>
+                        <p>Check out this outfit from Sonic Rumble for Rouge the Bat! Don’t forget to subscribe and leave a comment letting me know what you think of the mod!</p>
+                        
+                        <a href="redirect.html?id=steampunk_rouge&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1L32QChZ5ptTRDk5FYcsD8nc3hhmwhOa0%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
+                            Download
+                        </a>
+                    </div>
+
+                    <div class="mod-previews">
+                        <p><strong>Previews:</strong></p>
+                        <div class="preview-grid">
+                            <img src="srouge1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="srouge2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="srouge3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="srouge4.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             </div>
     </div>
 
@@ -154,46 +182,32 @@
     </div>
 
     <script>
-        // KÉP NAGYÍTÁS
         function openLightbox(element) {
             document.getElementById("myLightbox").style.display = "flex";
             document.getElementById("lightboxImg").src = element.src;
-            event.stopPropagation(); // Hogy ne záródjon be azonnal
         }
 
-        // KATEGÓRIA SZŰRÉS (EZ A LÉNYEG!)
         function filterMods(gameCategory) {
-            // 1. Gombok színezése
             const buttons = document.querySelectorAll('.game-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            // Megkeressük, melyikre kattintottunk (kicsit trükkös, mert az onclick hívja)
             event.target.classList.add('active');
 
-            // 2. Modok szűrése
             const mods = document.querySelectorAll('.mod-card');
             let visibleCount = 0;
 
             mods.forEach(mod => {
-                // Megnézzük, milyen játékhoz tartozik a mod (data-game attribútum)
                 const modGame = mod.getAttribute('data-game');
-
                 if (gameCategory === 'all' || modGame === gameCategory) {
-                    mod.style.display = 'flex'; // Megjelenítés
+                    mod.style.display = 'flex';
                     visibleCount++;
                 } else {
-                    mod.style.display = 'none'; // Elrejtés
+                    mod.style.display = 'none';
                 }
             });
 
-            // Ha nincs találat, írjuk ki
             const noModsText = document.getElementById('noModsText');
-            if (visibleCount === 0) {
-                noModsText.style.display = 'block';
-            } else {
-                noModsText.style.display = 'none';
-            }
+            noModsText.style.display = (visibleCount === 0) ? 'block' : 'none';
         }
     </script>
-
 </body>
 </html>
