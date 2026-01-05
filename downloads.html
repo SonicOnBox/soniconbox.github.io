@@ -20,7 +20,7 @@
         .nav-bar a:hover { background-color: #555; }
         .nav-bar a.active { background-color: #3498db; }
 
-        /* --- FŐ ELRENDEZÉS --- */
+        /* --- FŐ ELRENDEZÉS (SIDEBAR + CONTENT) --- */
         .main-layout {
             display: flex;
             max-width: 1200px;
@@ -29,6 +29,7 @@
             padding: 0 20px;
         }
 
+        /* BAL OLDALI MENÜ */
         .sidebar {
             flex: 0 0 250px;
             background: white;
@@ -39,6 +40,8 @@
         }
         
         .sidebar h3 { margin-top: 20px; margin-bottom: 10px; color: #e74c3c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .sidebar h3:first-child { margin-top: 0; }
+
         .game-btn {
             display: block; width: 100%; text-align: left; padding: 10px; margin-bottom: 5px;
             background: none; border: none; cursor: pointer; border-radius: 5px; font-size: 0.95rem;
@@ -46,8 +49,14 @@
         }
         .game-btn:hover { background: #f0f0f0; color: #333; }
         .game-btn.active { background: #3498db; color: white; font-weight: bold; }
+        .game-btn-all { font-weight: bold; color: #333; }
 
         .content-area { flex: 1; }
+
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; box-sizing: border-box; }
+        }
 
         .mod-card {
             background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -57,8 +66,8 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .mod-header { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        .mod-title { font-size: 1.8rem; color: #2c3e50; margin: 0; }
-        .mod-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px; }
+        .mod-title { font-size: 1.8rem; color: #2c3e50; margin: 0; display: inline-block;}
+        .mod-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px; vertical-align: middle;}
         .game-tag { background: #f1c40f; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; float: right; font-weight: bold;}
 
         .mod-content { display: flex; flex-wrap: wrap; gap: 20px; }
@@ -72,24 +81,25 @@
         .preview-grid img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
         .preview-grid img:hover { border-color: #3498db; transform: scale(1.05); }
 
-        /* --- LIGHTBOX (GALÉRIA) --- */
+        /* --- LIGHTBOX (LAPOZHATÓ) --- */
         .lightbox { 
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
             background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; 
         }
         .lightbox img { max-width: 90%; max-height: 80%; border: 5px solid white; border-radius: 5px; }
-        .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; padding: 20px; cursor: pointer; font-size: 24px; border-radius: 50%; transition: 0.3s; }
+        .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; user-select: none; }
+        
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.2); color: white; border: none;
+            padding: 20px; cursor: pointer; font-size: 24px; border-radius: 50%;
+            transition: 0.3s; user-select: none;
+        }
         .nav-btn:hover { background: rgba(255,255,255,0.5); }
         .prev { left: 20px; }
         .next { right: 20px; }
 
         footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 40px; }
-
-        @media (max-width: 768px) {
-            .main-layout { flex-direction: column; }
-            .sidebar { width: 100%; }
-        }
     </style>
 </head>
 <body>
@@ -106,29 +116,95 @@
     </div>
 
     <div class="main-layout">
+        
         <div class="sidebar">
-            <button class="game-btn active" onclick="filterMods('all')">📂 ALL MODS</button>
-            <h3>Hedge Engine</h3>
+            <button class="game-btn game-btn-all active" onclick="filterMods('all')">📂 ALL MODS</button>
+            
+            <h3>Hedge Engine Games</h3>
             <button class="game-btn" onclick="filterMods('generations')">Sonic Generations</button>
-            <button class="game-btn" onclick="filterMods('racing')">Sonic Racing</button>
-            <h3>Other</h3>
+            <button class="game-btn" onclick="filterMods('shadow_gen')">Shadow Generations</button>
+            <button class="game-btn" onclick="filterMods('unleashed')">Sonic Unleashed</button>
+            <button class="game-btn" onclick="filterMods('lost_world')">Sonic Lost World</button>
+            <button class="game-btn" onclick="filterMods('forces')">Sonic Forces</button>
+            <button class="game-btn" onclick="filterMods('frontiers')">Sonic Frontiers</button>
+            <button class="game-btn" onclick="filterMods('superstars')">Sonic Superstars</button>
+            <button class="game-btn" onclick="filterMods('colors')">Sonic Colors Ultimate</button>
+            <button class="game-btn" onclick="filterMods('sadx')">Sonic Adventure DX</button>
+            <button class="game-btn" onclick="filterMods('sa2')">Sonic Adventure 2</button>
+            <button class="game-btn" onclick="filterMods('06')">Sonic '06</button>
+            <button class="game-btn" onclick="filterMods('racing')">Sonic Racing Crossworlds</button>
+
+            <h3>Retro Engine Games</h3>
+            <button class="game-btn" onclick="filterMods('mania')">Sonic Mania Plus</button>
+            <button class="game-btn" onclick="filterMods('origins')">Sonic Origins</button>
+
+            <h3>Other Games</h3>
             <button class="game-btn" onclick="filterMods('minecraft')">Minecraft Maps</button>
         </div>
 
         <div class="content-area" id="modContainer">
             <p id="noModsText" style="display:none; text-align:center; color:#777;">Empty section.</p>
 
+            <div class="mod-card" data-game="racing">
+                <div class="mod-header">
+                    <span class="mod-title">Steampunk Rouge Outfit in Crossworlds!</span>
+                    <span class="mod-version">v1.0</span>
+                    <span class="game-tag">Sonic Racing Crossworlds</span>
+                </div>
+                <div class="mod-content">
+                    <div class="mod-info">
+                        <p><strong>Description:</strong></p>
+                        <p>Check out this outfit from Sonic Rumble for Rouge the Bat! Don’t forget to subscribe and leave a comment letting me know what you think of the mod!</p>
+                        <a href="redirect.html?id=steampunk_rouge&amp;link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1L32QChZ5ptTRDk5FYcsD8nc3hhmwhOa0%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">Download</a>
+                    </div>
+                    <div class="mod-previews">
+                        <p><strong>Previews:</strong></p>
+                        <div class="preview-grid gallery">
+                            <img src="images/srouge1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/srouge2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/srouge3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/srouge4.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mod-card" data-game="racing">
+                <div class="mod-header">
+                    <span class="mod-title">Steampunk Metal Sonic in Crossworlds</span>
+                    <span class="mod-version">v1.0</span>
+                    <span class="game-tag">Sonic Racing Crossworlds</span>
+                </div>
+                <div class="mod-content">
+                    <div class="mod-info">
+                        <p><strong>Description:</strong></p>
+                        <p>Here’s another new mod for Sonic Racing Crossworlds—this time featuring Metal Sonic in a stylish steampunk outfit, now ready to play!</p>
+                        <a href="redirect.html?id=steampunk_metalsonic_crossworlds&amp;link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1rgWc8y5YKEeDxmE66VeWEUW0QGt-ad0R%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">Download</a>
+                    </div>
+                    <div class="mod-previews">
+                        <div class="preview-grid gallery">
+                            <img src="images/smetal1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal5.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal6.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="mod-card" data-game="generations">
                 <div class="mod-header">
-                    <span class="mod-title">Atreyu Generations</span>
+                    <span class="mod-title">Atreyu in Sonic Generations</span>
                     <span class="mod-version">v1.0</span>
                     <span class="game-tag">GENERATIONS</span>
                 </div>
                 <div class="mod-content">
                     <div class="mod-info">
                         <p><strong>Description:</strong></p>
-                        <p>Custom character mod featuring Atreyu for Sonic Generations.</p>
-                        <a href="#" class="download-btn">Download</a>
+                        <p>Play as Atreyu in Sonic Generations! Custom model and textures included.</p>
+                        <a href="#" target="_blank" class="download-btn">Download</a>
                     </div>
                     <div class="mod-previews">
                         <p><strong>Previews:</strong></p>
@@ -152,7 +228,7 @@
                 <div class="mod-content">
                     <div class="mod-info">
                         <p><strong>Description:</strong></p>
-                        <p>An older mod, check it if you like Shadic!</p>
+                        <p>This is another old mod, since I'm a beginner here, but check it if you like it.</p>
                         <a href="redirect.html?id=shadic_generations&link=https%3A%2F%2Fwww.mediafire.com%2Fdownload%2F8p3ev0t6k9e47d9%2FShadic%2BGenerations%2B-%2BMod%2Bby%2BSonicOnBox.zip" target="_blank" class="download-btn">Download</a>
                     </div>
                     <div class="mod-previews">
@@ -166,21 +242,24 @@
                 </div>
             </div>
 
-            <div class="mod-card" data-game="racing">
+            <div class="mod-card" data-game="minecraft">
                 <div class="mod-header">
-                    <span class="mod-title">Steampunk Rouge (Crossworlds)</span>
-                    <span class="game-tag">SONIC RACING</span>
+                    <span class="mod-title">Minecraft: Mixed Statues (XboxCraft V1)</span>
+                    <span class="mod-version">v1.0</span>
+                    <span class="game-tag">Minecraft Maps</span>
                 </div>
                 <div class="mod-content">
                     <div class="mod-info">
-                        <p>Steampunk outfit from Sonic Rumble for Rouge the Bat!</p>
-                        <a href="redirect.html?id=steampunk_rouge&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1L32QChZ5ptTRDk5FYcsD8nc3hhmwhOa0%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">Download</a>
+                        <p><strong>Description:</strong></p>
+                        <p>This is my old map creation for the Minecraft game, where you can find plenty of statues.</p>
+                        <a href="redirect.html?id=mixed_statues&amp;link=http%3A%2F%2Fwww.mediafire.com%2Fdownload%2Fvte6t92durmy7n2%2FMinecraft%2BSzobor%2BKi%2B%25C3%25A1llit%25C3%25A1s%2BV4.zip" target="_blank" class="download-btn">Download</a>
                     </div>
                     <div class="mod-previews">
                         <div class="preview-grid gallery">
-                            <img src="images/srouge1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/srouge2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/srouge3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue4.png" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
@@ -188,18 +267,45 @@
 
             <div class="mod-card" data-game="minecraft">
                 <div class="mod-header">
-                    <span class="mod-title">Minecraft: Mixed Statues</span>
-                    <span class="game-tag">MINECRAFT</span>
+                    <span class="mod-title">Minecraft - Sonic Battle Map GBA</span>
+                    <span class="mod-version">v1.0</span>
+                    <span class="game-tag">Minecraft Maps</span>
                 </div>
                 <div class="mod-content">
                     <div class="mod-info">
-                        <p>Old map creation with plenty of statues.</p>
-                        <a href="redirect.html?id=mixed_statues&link=http%3A%2F%2Fwww.mediafire.com%2Fdownload%2Fvte6t92durmy7n2%2FMinecraft%2BSzobor%2BKi%2B%25C3%25A1llit%25C3%25A1s%2BV4.zip" target="_blank" class="download-btn">Download</a>
+                        <p><strong>Description:</strong></p>
+                        <p>This is my old map creation for Minecraft, where I made a Sonic Battle Map for the game.</p>
+                        <a href="redirect.html?id=battle_map_minecraft&amp;link=https%3A%2F%2Fwww.mediafire.com%2Fdownload%2Fbtr7kfw7b475eal%2FSonic_Battle_%2528GBA%2529.zip" target="_blank" class="download-btn">Download</a>
                     </div>
                     <div class="mod-previews">
                         <div class="preview-grid gallery">
-                            <img src="images/statue1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/statue2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/bmap4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mod-card" data-game="minecraft">
+                <div class="mod-header">
+                    <span class="mod-title">Minecraft - Sonic Boom Map</span>
+                    <span class="mod-version">v1.0</span>
+                    <span class="game-tag">Minecraft Maps</span>
+                </div>
+                <div class="mod-content">
+                    <div class="mod-info">
+                        <p><strong>Description:</strong></p>
+                        <p>This is my old map creation for Minecraft, where I made a Sonic Boom Map for the game.</p>
+                        <a href="redirect.html?id=boom_map_minecraft&amp;link=https%3A%2F%2Fwww.mediafire.com%2Fdownload%2Fk7j11gbil7vg1xj%2FSonic%2BBoom%2BMap%2BIn%2BMINECRAFT.zip" target="_blank" class="download-btn">Download</a>
+                    </div>
+                    <div class="mod-previews">
+                        <div class="preview-grid gallery">
+                            <img src="images/boommap1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/boommap2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/boommap3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/boommap4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
@@ -214,7 +320,7 @@
     <div id="myLightbox" class="lightbox">
         <span class="close-btn" onclick="closeLightbox()">&times;</span>
         <button class="nav-btn prev" onclick="changeImage(-1)">&#10094;</button>
-        <img id="lightboxImg" src="">
+        <img id="lightboxImg" src="" alt="Fullscreen Image">
         <button class="nav-btn next" onclick="changeImage(1)">&#10095;</button>
     </div>
 
@@ -227,38 +333,50 @@
             if (gallery) {
                 currentImages = Array.from(gallery.querySelectorAll('img')).map(img => img.src);
                 currentIndex = currentImages.indexOf(element.src);
+                
                 document.getElementById("myLightbox").style.display = "flex";
                 updateLightboxImage();
             }
         }
 
-        function closeLightbox() { document.getElementById("myLightbox").style.display = "none"; }
+        function closeLightbox() {
+            document.getElementById("myLightbox").style.display = "none";
+        }
+
         function changeImage(step) {
             currentIndex += step;
             if (currentIndex >= currentImages.length) currentIndex = 0;
             if (currentIndex < 0) currentIndex = currentImages.length - 1;
             updateLightboxImage();
         }
-        function updateLightboxImage() { document.getElementById("lightboxImg").src = currentImages[currentIndex]; }
+
+        function updateLightboxImage() {
+            document.getElementById("lightboxImg").src = currentImages[currentIndex];
+        }
 
         function filterMods(gameCategory) {
             const buttons = document.querySelectorAll('.game-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event) event.target.classList.add('active');
 
             const mods = document.querySelectorAll('.mod-card');
             let visibleCount = 0;
+
             mods.forEach(mod => {
                 const modGame = mod.getAttribute('data-game');
                 if (gameCategory === 'all' || modGame === gameCategory) {
                     mod.style.display = 'flex';
                     visibleCount++;
-                } else { mod.style.display = 'none'; }
+                } else {
+                    mod.style.display = 'none';
+                }
             });
-            document.getElementById('noModsText').style.display = (visibleCount === 0) ? 'block' : 'none';
+
+            const noModsText = document.getElementById('noModsText');
+            noModsText.style.display = (visibleCount === 0) ? 'block' : 'none';
         }
 
-        document.addEventListener('keydown', e => {
+        document.addEventListener('keydown', function(e) {
             if (document.getElementById("myLightbox").style.display === "flex") {
                 if (e.key === "Escape") closeLightbox();
                 if (e.key === "ArrowLeft") changeImage(-1);
