@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonicOnBox - Ultimate Local Admin</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; padding: 20px; line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; background: #2c3e50; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #f1c40f; text-align: center; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; }
+        .status-bar { text-align: center; color: #bdc3c7; font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid #34495e; padding-bottom: 10px; }
+        h2 { color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 10px; margin-top: 30px; display: flex; align-items: center; gap: 10px; }
+        
+        .box { background: #34495e; padding: 25px; border-radius: 10px; margin-top: 20px; border: 1px solid #455a64; }
+        label { font-weight: bold; display: block; margin-top: 15px; color: #ecf0f1; }
+        input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border-radius: 5px; border: none; box-sizing: border-box; background: #ecf0f1; color: #2c3e50; font-size: 1rem; }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 1rem; text-transform: uppercase; }
+        .btn-gen { background: #27ae60; color: white; }
+        .btn-load { background: #3498db; color: white; }
+        .btn-download { background: #e74c3c; color: white; display: none; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); filter: brightness(1.1); }
+        
+        .search-box { margin-bottom: 15px; padding: 12px; border-radius: 5px; border: none; width: 100%; background: #ecf0f1; }
+        .mod-list { max-height: 300px; overflow-y: auto; background: #1a1a1a; border-radius: 5px; padding: 10px; border: 1px solid #34495e; }
+        .mod-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #333; }
+        .delete-btn { background: #c0392b; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; border: none; font-size: 0.8rem; }
+        
+        pre { background: #000; color: #2ecc71; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; font-size: 0.8rem; max-height: 250px; border: 1px solid #27ae60; margin-top: 20px; }
+        .target-selector { background: #f1c40f; color: #2c3e50; padding: 10px; border-radius: 5px; font-weight: bold; margin-bottom: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📊 SonicOnBox Master Admin</h1>
+        <div class="status-bar">OFFLINE MODE — Ne töltsd fel ezt a fájlt a GitHubra!</div>
+
+        <div class="target-selector">
+            Melyik oldalt szeretnéd szerkeszteni? 
+            <select id="targetFile" style="width: auto; margin-left: 10px; padding: 5px;">
+                <option value="downloads.html">downloads.html (Modok)</option>
+                <option value="commission.html">commission.html (Rendelések/Munkák)</option>
+            </select>
+        </div>
+
+        <h2>📂 Meglévő Tartalom Kezelése</h2>
+        <div class="box">
+            <button class="btn-load" onclick="loadAndParse()">1. Tartalom Betöltése a Weboldalról</button>
+            <div id="managementArea" style="display:none; margin-top:20px;">
+                <input type="text" class="search-box" id="modSearch" onkeyup="filterModList()" placeholder="🔍 Keresés név alapján...">
+                <div class="mod-list" id="modListDisplay"></div>
+            </div>
+        </div>
+
+        <h2>🚀 Új Tartalom Hozzáadása</h2>
+        <div class="box">
+            <label>Név/Cím:</label>
+            <input type="text" id="genName" placeholder="Pl: Steampunk Metal Sonic">
+            
+            <label>Játék Kiválasztása:</label>
+            <select id="genGame">
+                <optgroup label="Hedge Engine Games">
+                    <option value="generations">Sonic Generations</option>
+                    <option value="shadow_gen">Shadow Generations</option>
+                    <option value="frontiers">Sonic Frontiers</option>
+                    <option value="superstars">Sonic Superstars</option>
+                    <option value="unleashed">Sonic Unleashed</option>
+                    <option value="colors">Sonic Colors Ultimate</option>
+                    <option value="forces">Sonic Forces</option>
+                    <option value="lost_world">Sonic Lost World</option>
+                    <option value="sadx">Sonic Adventure DX</option>
+                    <option value="sa2">Sonic Adventure 2</option>
+                    <option value="06">Sonic '06</option>
+                    <option value="racing">Sonic Racing Crossworlds</option>
+                </optgroup>
+                <optgroup label="Retro Engine Games">
+                    <option value="mania">Sonic Mania Plus</option>
+                    <option value="origins">Sonic Origins</option>
+                    <option value="cd">Sonic CD</option>
+                </optgroup>
+                <optgroup label="Other Games">
+                    <option value="minecraft">Minecraft Maps</option>
+                    <option value="rumble">Sonic Rumble</option>
+                    <option value="dash">Sonic Dash / Forces Speed Battle</option>
+                </optgroup>
+            </select>
+
+            <label>Leírás:</label>
+            <textarea id="genDesc" rows="3" placeholder="Ide jön a részletes leírás..."></textarea>
+            
+            <label>Redirect ID (Egyedi azonosító):</label>
+            <input type="text" id="genRedirectId" placeholder="Pl: steampunk_metal_01">
+            
+            <label>Letöltési/Külső Link:</label>
+            <input type="text" id="genLink" placeholder="Google Drive, Mediafire vagy Discord link">
+            
+            <label>Képek (A fájlnevek az images/ mappában legyenek):</label>
+            <input type="file" id="imagePicker" multiple accept="image/*">
+
+            <div class="btn-group">
+                <button class="btn-gen" onclick="finalizeFile()">🛠️ Összeállítás</button>
+                <button id="downloadBtn" class="btn-download" onclick="downloadFile()">💾 Kész HTML Letöltése</button>
+            </div>
+            
+            <pre id="outputCode" style="display:none;"></pre>
+        </div>
+    </div>
+
+    <script>
+        let fullHtmlContent = "";
+        let modsArray = [];
+        const BASE_URL = 'https://soniconbox.github.io/';
+
+        async function loadAndParse() {
+            const fileName = document.getElementById('targetFile').value;
+            try {
+                const response = await fetch(BASE_URL + fileName + '?t=' + Date.now());
+                if (!response.ok) throw new Error("Hiba");
+                fullHtmlContent = await response.text();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(fullHtmlContent, 'text/html');
+                const modCards = doc.querySelectorAll('.mod-card');
+                
+                modsArray = [];
+                modCards.forEach((card, index) => {
+                    const title = card.querySelector('.mod-title') ? card.querySelector('.mod-title').innerText : "Ismeretlen elem";
+                    modsArray.push({
+                        id: index,
+                        name: title,
+                        html: card.outerHTML
+                    });
+                });
+
+                displayMods();
+                document.getElementById('managementArea').style.display = "block";
+                alert("Siker! Betöltve: " + fileName);
+            } catch (e) { alert("Hiba! Nem sikerült betölteni a(z) " + fileName + " fájlt."); }
+        }
+
+        function displayMods() {
+            const listDiv = document.getElementById('modListDisplay');
+            listDiv.innerHTML = "";
+            modsArray.forEach(mod => {
+                listDiv.innerHTML += `
+                    <div class="mod-item" data-name="${mod.name.toLowerCase()}">
+                        <span><strong>${mod.name}</strong></span>
+                        <button class="delete-btn" onclick="deleteMod(${mod.id})">Törlés</button>
+                    </div>`;
+            });
+        }
+
+        function filterModList() {
+            const query = document.getElementById('modSearch').value.toLowerCase();
+            document.querySelectorAll('.mod-item').forEach(item => {
+                item.style.display = item.getAttribute('data-name').includes(query) ? "flex" : "none";
+            });
+        }
+
+        function deleteMod(id) {
+            if(confirm("Biztosan törölni szeretnéd?")) {
+                modsArray = modsArray.filter(m => m.id !== id);
+                displayMods();
+            }
+        }
+
+        function finalizeFile() {
+            if (!fullHtmlContent) { alert("Előbb töltsd be az adatokat!"); return; }
+            const fileName = document.getElementById('targetFile').value;
+            const modsHtml = modsArray.map(m => m.html).join('\n            ');
+            
+            let newCardHtml = "";
+            const newName = document.getElementById('genName').value;
+            if (newName) {
+                const game = document.getElementById('genGame').value;
+                const desc = document.getElementById('genDesc').value;
+                const rid = document.getElementById('genRedirectId').value;
+                const link = encodeURIComponent(document.getElementById('genLink').value);
+                const files = document.getElementById('imagePicker').files;
+                let imgHtml = "";
+                for(let f of files) { imgHtml += `<img src="images/${f.name}" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">\n`; }
+                
+                newCardHtml = `
+            <div class="mod-card" data-game="${game}">
+                <div class="mod-header"><span class="mod-title">${newName}</span><span class="game-tag">${game.toUpperCase()}</span></div>
+                <div class="mod-content">
+                    <div class="mod-info"><p><strong>Description:</strong></p><p>${desc}</p><a href="redirect.html?id=${rid}&link=${link}" target="_blank" class="download-btn">Link</a></div>
+                    <div class="mod-previews"><div class="preview-grid gallery">${imgHtml}</div></div>
+                </div>
+            </div>`;
+            }
+
+            const containerStart = 'id="modContainer">';
+            const startIdx = fullHtmlContent.indexOf(containerStart);
+            const header = fullHtmlContent.substring(0, startIdx + containerStart.length);
+            
+            const noModsHtml = '\n            <p id="noModsText" style="display:none; text-align:center; color:#777;">Empty section.</p>\n';
+            const footerIdx = fullHtmlContent.indexOf('<footer>');
+            const endPart = '\n        </div>\n    </div>\n\n    ' + fullHtmlContent.substring(footerIdx);
+
+            const finalHtml = header + noModsHtml + modsHtml + newCardHtml + endPart;
+
+            document.getElementById('outputCode').textContent = finalHtml;
+            document.getElementById('outputCode').style.display = "block";
+            document.getElementById('downloadBtn').style.display = "block";
+            document.getElementById('downloadBtn').innerText = "💾 " + fileName + " Mentése";
+            alert("A kód elkészült!");
+        }
+
+        function downloadFile() {
+            const fileName = document.getElementById('targetFile').value;
+            const blob = new Blob([document.getElementById('outputCode').textContent], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = fileName;
+            a.click();
+        }
+    </script>
+</body>
+</html>
