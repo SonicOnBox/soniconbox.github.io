@@ -30,48 +30,62 @@
         <h1>📊 SonicOnBox Pro Admin</h1>
 
         <div class="step-info">
-            <strong>Használat:</strong> Töltsd ki az adatokat, válaszd ki a képeket, majd kattints a kód generálására. 
-            A rendszer beilleszti az új modot a meglévő fájlodba, neked csak le kell töltened a kész <b>downloads.html</b>-t!
+            <strong>Használat:</strong> Válaszd ki a játékot, töltsd ki az adatokat, majd kattints a kód generálására. 
+            A rendszer automatikusan hozzáadja a modot a megfelelő szekcióhoz.
         </div>
 
         <h2>🚀 Új Mod Hozzáadása</h2>
         <div class="generator-container">
-            <label>Mod Neve:</label>
-            <input type="text" id="genName" placeholder="Pl: Shadow the Hedgehog Mod">
+            <label>Mod Neve (Pl: Steampunk Metal Sonic in Crossworlds):</label>
+            <input type="text" id="genName" placeholder="A mod teljes neve...">
 
             <label>Verzió:</label>
             <input type="text" id="genVersion" value="v1.0">
 
             <label>Melyik játékhoz tartozik?</label>
             <select id="genGame">
-                <option value="generations">Sonic Generations</option>
-                <option value="shadow_gen">Shadow Generations</option>
-                <option value="frontiers">Sonic Frontiers</option>
-                <option value="forces">Sonic Forces</option>
-                <option value="unleashed">Sonic Unleashed</option>
-                <option value="racing">Sonic Racing Crossworlds</option>
-                <option value="minecraft">Minecraft Maps</option>
+                <optgroup label="Hedge Engine Games">
+                    <option value="generations">Sonic Generations</option>
+                    <option value="shadow_gen">Shadow Generations</option>
+                    <option value="unleashed">Sonic Unleashed</option>
+                    <option value="lost_world">Sonic Lost World</option>
+                    <option value="forces">Sonic Forces</option>
+                    <option value="frontiers">Sonic Frontiers</option>
+                    <option value="superstars">Sonic Superstars</option>
+                    <option value="colors">Sonic Colors Ultimate</option>
+                    <option value="sadx">Sonic Adventure DX</option>
+                    <option value="sa2">Sonic Adventure 2</option>
+                    <option value="06">Sonic '06</option>
+                    <option value="racing">Sonic Racing Crossworlds</option>
+                </optgroup>
+                <optgroup label="Retro Engine Games">
+                    <option value="mania">Sonic Mania Plus</option>
+                    <option value="origins">Sonic Origins</option>
+                </optgroup>
+                <optgroup label="Other Games">
+                    <option value="minecraft">Minecraft Maps</option>
+                </optgroup>
             </select>
 
             <label>Leírás:</label>
-            <textarea id="genDesc" rows="3" placeholder="Rövid leírás a modról..."></textarea>
+            <textarea id="genDesc" rows="3" placeholder="Itt írd le a mod részleteit..."></textarea>
 
             <label>Redirect ID:</label>
-            <input type="text" id="genRedirectId" placeholder="Pl: shadow_mod_01">
+            <input type="text" id="genRedirectId" placeholder="Pl: steampunk_metal_racing">
 
             <label>Letöltési Link:</label>
-            <input type="text" id="genLink" placeholder="Mediafire vagy Google Drive link">
+            <input type="text" id="genLink" placeholder="Google Drive vagy Mediafire link">
 
-            <label>Képek (images/ mappába kerülnek):</label>
+            <label>Képek kiválasztása:</label>
             <input type="file" id="imagePicker" multiple accept="image/*">
 
             <div class="btn-group">
-                <button class="btn-gen" onclick="processFullFile()">🛠️ Teljes Fájl Összeállítása</button>
+                <button class="btn-gen" onclick="processFullFile()">🛠️ Kód Összeállítása</button>
                 <a id="downloadAnchor" style="display:none"></a>
                 <button id="downloadBtn" class="btn-download" onclick="downloadUpdatedFile()">💾 Kész downloads.html Letöltése</button>
             </div>
 
-            <h3 id="previewTitle" style="display:none; margin-top:30px;">Előnézet (Az új downloads.html kódja):</h3>
+            <h3 id="previewTitle" style="display:none; margin-top:30px;">Előnézet (Az új fájl tartalma):</h3>
             <pre id="outputCode" style="display:none;"></pre>
         </div>
     </div>
@@ -79,17 +93,35 @@
     <script>
         let updatedFullContent = "";
 
+        // Segédfüggvény a szép játéknevekhez a sárga tag-hez
+        function getGameDisplayName(val) {
+            const names = {
+                'generations': 'Sonic Generations',
+                'shadow_gen': 'Shadow Generations',
+                'unleashed': 'Sonic Unleashed',
+                'lost_world': 'Sonic Lost World',
+                'forces': 'Sonic Forces',
+                'frontiers': 'Sonic Frontiers',
+                'superstars': 'Sonic Superstars',
+                'colors': 'Sonic Colors Ultimate',
+                'sadx': 'Sonic Adventure DX',
+                'sa2': 'Sonic Adventure 2',
+                '06': "Sonic '06",
+                'racing': 'Sonic Racing Crossworlds',
+                'mania': 'Sonic Mania Plus',
+                'origins': 'Sonic Origins',
+                'minecraft': 'Minecraft Maps'
+            };
+            return names[val] || val.toUpperCase();
+        }
+
         async function processFullFile() {
             try {
-                // 1. Letöltjük a jelenlegi downloads.html tartalmát
                 const response = await fetch('downloads.html?t=' + Date.now());
+                if (!response.ok) throw new Error();
                 let currentHtml = await response.text();
 
-                // 2. Legeneráljuk az új mod kártyát
                 const newModCard = createModCard();
-
-                // 3. Megkeressük a megfelelő helyet a beillesztéshez
-                // A kód a modContainer végére, az utolsó div elé szúrja be
                 const containerId = 'id="modContainer"';
                 const containerIndex = currentHtml.indexOf(containerId);
                 
@@ -98,33 +130,30 @@
                     return;
                 }
 
-                // Keressük meg a modContainer végét jelző </div>-et
                 const searchPart = currentHtml.substring(containerIndex);
-                const closingDivIndex = searchPart.indexOf('</div>'); // Az első záró div a p tag után
+                const closingDivIndex = searchPart.indexOf('</div>'); 
                 const actualContainerEnd = searchPart.indexOf('</div>', closingDivIndex + 1); 
                 
-                // Beillesztés
                 const insertPosition = containerIndex + actualContainerEnd;
                 updatedFullContent = currentHtml.slice(0, insertPosition) + newModCard + "\n" + currentHtml.slice(insertPosition);
 
-                // 4. Megjelenítés és letöltés engedélyezése
                 document.getElementById('outputCode').textContent = updatedFullContent;
                 document.getElementById('outputCode').style.display = "block";
                 document.getElementById('previewTitle').style.display = "block";
                 document.getElementById('downloadBtn').style.display = "block";
                 
-                alert("Siker! A teljes fájl elkészült, töltsd le és írd felül a régit!");
+                alert("Siker! A lista frissítve lett minden játékkal. Töltsd le a kész fájlt!");
 
             } catch (error) {
-                console.error(error);
-                alert("Hiba történt a fájl beolvasásakor. Győződj meg róla, hogy az admin.html a downloads.html mellett van!");
+                alert("Hiba: A downloads.html nem található az admin.html mellett!");
             }
         }
 
         function createModCard() {
             const name = document.getElementById('genName').value || "Új Mod";
             const version = document.getElementById('genVersion').value || "v1.0";
-            const game = document.getElementById('genGame').value;
+            const gameValue = document.getElementById('genGame').value;
+            const gameDisplay = getGameDisplayName(gameValue);
             const desc = document.getElementById('genDesc').value || "";
             const redirectId = document.getElementById('genRedirectId').value || "id";
             const link = encodeURIComponent(document.getElementById('genLink').value || "");
@@ -136,11 +165,11 @@
             }
 
             return `
-            <div class="mod-card" data-game="${game}">
+            <div class="mod-card" data-game="${gameValue}">
                 <div class="mod-header">
                     <span class="mod-title">${name}</span>
                     <span class="mod-version">${version}</span>
-                    <span class="game-tag">${game.replace('_', ' ').toUpperCase()}</span>
+                    <span class="game-tag">${gameDisplay}</span>
                 </div>
                 <div class="mod-content">
                     <div class="mod-info">
