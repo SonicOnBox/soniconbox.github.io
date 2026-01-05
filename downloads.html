@@ -98,7 +98,6 @@
         <a href="index.html">Home</a>
         <a href="gallery.html">Gallery</a>
         <a href="downloads.html" class="active">Mod Download</a>
-        <a href="commission.html" class="active">Commissions</a>
     </div>
 
     <div class="main-layout">
@@ -155,6 +154,37 @@
                             <img src="images/srouge2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                             <img src="images/srouge3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                             <img src="images/srouge4.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mod-card" data-game="racing">
+                <div class="mod-header">
+                    <span class="mod-title">Steampunk Metal Sonic in Sonic Racing Crossworlds Mod</span>
+                    <span class="mod-version">v1.0</span>
+                    <span class="game-tag">RACING</span>
+                </div>
+                
+                <div class="mod-content">
+                    <div class="mod-info">
+                        <p><strong>Description:</strong></p>
+                        <p>Here’s another new mod for Sonic Racing Crossworlds—this time featuring Metal Sonic in a stylish steampunk outfit, now ready to play! What do you think of the mod? Let me know in the comments!</p>
+                        
+                        <a href="redirect.html?id=steampunk_metalsonic_crossworlds&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1rgWc8y5YKEeDxmE66VeWEUW0QGt-ad0R%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
+                            Download
+                        </a>
+                    </div>
+
+                    <div class="mod-previews">
+                        <p><strong>Previews:</strong></p>
+                        <div class="preview-grid gallery">
+                            <img src="images/smetal1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal5.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/smetal6.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
@@ -218,35 +248,6 @@
                 </div>
             </div>
 
-            <div class="mod-card" data-game="minecraft">
-                <div class="mod-header">
-                    <span class="mod-title">Minecraft - Sonic Boom Map</span>
-                    <span class="mod-version">v1.0</span>
-                    <span class="game-tag">Minecraft Maps</span>
-                </div>
-                
-                <div class="mod-content">
-                    <div class="mod-info">
-                        <p><strong>Description:</strong></p>
-                        <p>This is my old map creation for Minecraft, where I made a Sonic Boom Map for the game.</p>
-                        
-                        <a href="redirect.html?id=boom_map_minecraft&link=https%3A%2F%2Fwww.mediafire.com%2Fdownload%2Fk7j11gbil7vg1xj%2FSonic%2BBoom%2BMap%2BIn%2BMINECRAFT.zip" target="_blank" class="download-btn">
-                            Download
-                        </a>
-                    </div>
-
-                    <div class="mod-previews">
-                        <p><strong>Previews:</strong></p>
-                        <div class="preview-grid">
-                            <img src="images/boommap1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/boommap2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/boommap3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/boommap4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -268,11 +269,7 @@
         function filterMods(gameCategory) {
             const buttons = document.querySelectorAll('.game-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Hibajavítás: Az esemény kezelése
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
+            event.target.classList.add('active');
 
             const mods = document.querySelectorAll('.mod-card');
             let visibleCount = 0;
