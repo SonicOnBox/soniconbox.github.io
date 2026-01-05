@@ -31,7 +31,8 @@
         .menu-btn:hover { background: #f0f0f0; color: #333; }
         .menu-btn.active { background: #3498db; color: white; font-weight: bold; }
 
-        #gameSubMenu { margin-left: 15px; border-left: 2px solid #eee; padding-left: 10px; display: none; }
+        /* Almenü stílusok */
+        #gameSubMenu, #modelSubMenu { margin-left: 15px; border-left: 2px solid #eee; padding-left: 10px; display: none; }
         .game-sub-btn { font-size: 0.85rem; padding: 6px 10px; }
 
         .content-area { flex: 1; }
@@ -59,7 +60,7 @@
         .preview-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
         .preview-grid img:hover { transform: scale(1.05); border-color: #3498db; }
 
-        /* --- LIGHTBOX (LAPOZHATÓ) --- */
+        /* --- LIGHTBOX --- */
         .lightbox { 
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
             background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; 
@@ -117,6 +118,13 @@
                 <button class="menu-btn game-sub-btn" onclick="filterWorks('sa2', this)">Sonic Adventure 2</button>
                 <button class="menu-btn game-sub-btn" onclick="filterWorks('06', this)">Sonic '06</button>
             </div>
+
+            <button class="menu-btn" onclick="toggleModels(this)">📐 Model Works</button>
+            <div id="modelSubMenu">
+                <button class="menu-btn game-sub-btn" onclick="filterWorks('3d-sculpts', this)">3D Sculpts</button>
+                <button class="menu-btn game-sub-btn" onclick="filterWorks('custom-rigs', this)">Custom Rigs</button>
+                <button class="menu-btn game-sub-btn" onclick="filterWorks('characters', this)">Character Models</button>
+            </div>
         </div>
 
         <div class="content-area" id="mainContent">
@@ -147,53 +155,36 @@
                     <span class="work-version">v1.0</span>
                     <span class="game-tag">Sonic Generations</span>
                 </div>
-                
                 <div class="work-content">
                     <div class="work-info">
                         <p><strong>Description:</strong></p>
-                        <p>This is my first OC character and my first mod for the 2011 game Sonic Generations, and I’m excited to share it with you all!</p>
-                        
-                        <a href="redirect.html?id=anubius_generations&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1eAlVUoyJyG0PJDFgRi4qytHT1pRDIx6H%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
-                            Download
-                        </a>
+                        <p>This is my first OC character and my first mod for Sonic Generations!</p>
+                        <a href="#" class="download-btn">Download</a>
                     </div>
-
                     <div class="work-previews">
                         <p><strong>Previews:</strong></p>
                         <div class="preview-grid gallery">
                             <img src="images/anu1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/anu2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/anu3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/anu4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="work-card" data-game="generations">
+            <div class="work-card" data-game="3d-sculpts">
                 <div class="work-header">
-                    <span class="work-title">Super Saiyan Sonic Generations Mod</span>
-                    <span class="work-version">v1.0</span>
-                    <span class="game-tag">Sonic Generations</span>
+                    <span class="work-title">Custom 3D Sculpt Project</span>
+                    <span class="work-version">HQ</span>
+                    <span class="game-tag">3D Sculpt</span>
                 </div>
-                
                 <div class="work-content">
                     <div class="work-info">
                         <p><strong>Description:</strong></p>
-                        <p>This is my second OC character and my second mod for the 2011 game Sonic Generations, and I’m excited to share it with you all!</p>
-                        
-                        <a href="redirect.html?id=super_god_generations&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1D4h0awh38z-MtjIZavONbYdsdkGe37Dk%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
-                            Download
-                        </a>
+                        <p>A detailed high-poly sculpture created for portfolio purposes.</p>
                     </div>
-
                     <div class="work-previews">
                         <p><strong>Previews:</strong></p>
                         <div class="preview-grid gallery">
-                            <img src="images/god1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/god2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/god3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/god4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/model_preview.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
@@ -221,7 +212,6 @@
             const gallery = element.closest('.gallery');
             currentImages = Array.from(gallery.querySelectorAll('img')).map(img => img.src);
             currentIndex = currentImages.indexOf(element.src);
-            
             document.getElementById("myLightbox").style.display = "flex";
             updateLightboxImage();
         }
@@ -241,25 +231,48 @@
             document.getElementById("lightboxImg").src = currentImages[currentIndex];
         }
 
+        // Alap szekciók mutatása (General rész)
         function showSection(sectionId, btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
+            
+            // Almenük bezárása
             document.getElementById('gameSubMenu').style.display = 'none';
+            document.getElementById('modelSubMenu').style.display = 'none';
+            
             document.getElementById(sectionId).style.display = 'flex';
         }
 
+        // Sonic játékok menü lenyitása
         function toggleWorks(btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            
+            document.getElementById('modelSubMenu').style.display = 'none'; // Másik almenü bezárása
             const subMenu = document.getElementById('gameSubMenu');
             subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
         }
 
+        // Model munkák menü lenyitása
+        function toggleModels(btn) {
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById('gameSubMenu').style.display = 'none'; // Másik almenü bezárása
+            const subMenu = document.getElementById('modelSubMenu');
+            subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
+        }
+
+        // Szűrés a kártyák között (Data-game attribútum alapján)
         function filterWorks(game, btn) {
             document.querySelectorAll('.game-sub-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            
+            // Minden fő szekciót és kártyát elrejtünk
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
+            
+            // Csak azokat mutatjuk, amik az adott kategóriába tartoznak
             const works = document.querySelectorAll(`.work-card[data-game="${game}"]`);
             if(works.length > 0) {
                 works.forEach(w => w.style.display = 'flex');
