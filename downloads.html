@@ -81,10 +81,24 @@
         .preview-grid img { width: 100%; height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 2px solid transparent; }
         .preview-grid img:hover { border-color: #3498db; }
 
-        .lightbox { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
-        .lightbox img { max-width: 90%; max-height: 90%; border: 5px solid white; border-radius: 5px; }
+        /* --- LIGHTBOX (LAPOZHATÓ) --- */
+        .lightbox { 
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; 
+        }
+        .lightbox img { max-width: 90%; max-height: 80%; border: 5px solid white; border-radius: 5px; }
         .close-btn { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
         
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.2); color: white; border: none;
+            padding: 20px; cursor: pointer; font-size: 24px; border-radius: 50%;
+            transition: 0.3s;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.5); }
+        .prev { left: 20px; }
+        .next { right: 20px; }
+
         footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 40px; }
     </style>
 </head>
@@ -98,6 +112,7 @@
         <a href="index.html">Home</a>
         <a href="gallery.html">Gallery</a>
         <a href="downloads.html" class="active">Mod Download</a>
+        <a href="commission.html">Commission</a>
     </div>
 
     <div class="main-layout">
@@ -149,7 +164,7 @@
 
                     <div class="mod-previews">
                         <p><strong>Previews:</strong></p>
-                        <div class="preview-grid">
+                        <div class="preview-grid gallery">
                             <img src="images/srouge1.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                             <img src="images/srouge2.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                             <img src="images/srouge3.jpg" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
@@ -161,9 +176,9 @@
 
             <div class="mod-card" data-game="racing">
                 <div class="mod-header">
-                    <span class="mod-title">Steampunk Metal Sonic in Crossworlds Mod</span>
+                    <span class="mod-title">Steampunk Metal Sonic in Sonic Racing Crossworlds Mod</span>
                     <span class="mod-version">v1.0</span>
-                    <span class="game-tag">Sonic Racing Crossworlds</span>
+                    <span class="game-tag">RACING</span>
                 </div>
                 
                 <div class="mod-content">
@@ -209,67 +224,65 @@
 
                     <div class="mod-previews">
                         <p><strong>Previews:</strong></p>
-                        <div class="preview-grid">
+                        <div class="preview-grid gallery">
                             <img src="images/statue1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                             <img src="images/statue2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
                             <img src="images/statue3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/statue4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
+                            <img src="images/statue4.png" onerror="this.src='https://via.placeholder.com/150'">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mod-card" data-game="minecraft">
-                <div class="mod-header">
-                    <span class="mod-title">Minecraft - Sonic Battle Map GBA</span>
-                    <span class="mod-version">v1.0</span>
-                    <span class="game-tag">Minecraft Maps</span>
-                </div>
-                
-                <div class="mod-content">
-                    <div class="mod-info">
-                        <p><strong>Description:</strong></p>
-                        <p>This is my old map creation for Minecraft, where I made a Sonic Battle Map for the game.</p>
-                        
-                        <a href="redirect.html?id=battle_map_minecraft&link=https%3A%2F%2Fwww.mediafire.com%2Fdownload%2Fbtr7kfw7b475eal%2FSonic_Battle_%2528GBA%2529.zip" target="_blank" class="download-btn">
-                            Download
-                        </a>
-                    </div>
-
-                    <div class="mod-previews">
-                        <p><strong>Previews:</strong></p>
-                        <div class="preview-grid">
-                            <img src="images/bmap1.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/bmap2.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/bmap3.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                            <img src="images/bmap4.png" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">
-                        </div>
-                    </div>
-                </div>
             </div>
+    </div>
 
-        </div>
+    <div id="myLightbox" class="lightbox">
+        <span class="close-btn" onclick="closeLightbox()">&times;</span>
+        <button class="nav-btn prev" onclick="changeImage(-1)">&#10094;</button>
+        <img id="lightboxImg" src="">
+        <button class="nav-btn next" onclick="changeImage(1)">&#10095;</button>
     </div>
 
     <footer>
         <p>&copy; 2026 SonicOnBox. All rights reserved.</p>
     </footer>
 
-    <div id="myLightbox" class="lightbox" onclick="this.style.display='none'">
-        <span class="close-btn">&times;</span>
-        <img id="lightboxImg" src="">
-    </div>
-
     <script>
+        let currentImages = [];
+        let currentIndex = 0;
+
         function openLightbox(element) {
-            document.getElementById("myLightbox").style.display = "flex";
-            document.getElementById("lightboxImg").src = element.src;
+            // Megkeressük az aktuális galériát (preview-grid), amiben a kép van
+            const gallery = element.closest('.gallery');
+            if (gallery) {
+                currentImages = Array.from(gallery.querySelectorAll('img')).map(img => img.src);
+                currentIndex = currentImages.indexOf(element.src);
+                
+                document.getElementById("myLightbox").style.display = "flex";
+                updateLightboxImage();
+            }
+        }
+
+        function closeLightbox() {
+            document.getElementById("myLightbox").style.display = "none";
+        }
+
+        function changeImage(step) {
+            currentIndex += step;
+            if (currentIndex >= currentImages.length) currentIndex = 0;
+            if (currentIndex < 0) currentIndex = currentImages.length - 1;
+            updateLightboxImage();
+        }
+
+        function updateLightboxImage() {
+            document.getElementById("lightboxImg").src = currentImages[currentIndex];
         }
 
         function filterMods(gameCategory) {
             const buttons = document.querySelectorAll('.game-btn');
             buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event) event.target.classList.add('active');
 
             const mods = document.querySelectorAll('.mod-card');
             let visibleCount = 0;
@@ -287,6 +300,15 @@
             const noModsText = document.getElementById('noModsText');
             noModsText.style.display = (visibleCount === 0) ? 'block' : 'none';
         }
+
+        // Billentyűzet támogatás
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById("myLightbox").style.display === "flex") {
+                if (e.key === "Escape") closeLightbox();
+                if (e.key === "ArrowLeft") changeImage(-1);
+                if (e.key === "ArrowRight") changeImage(1);
+            }
+        });
     </script>
 </body>
 </html>
