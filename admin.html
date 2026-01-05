@@ -3,68 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonicOnBox - Auto Admin & Generator</title>
+    <title>SonicOnBox - Pro Admin Panel</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; padding: 20px; text-align: center; }
-        .container { max-width: 1000px; margin: 0 auto; background: #2c3e50; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: #f1c40f; margin-bottom: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a1a; color: white; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; background: #2c3e50; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #f1c40f; text-align: center; }
         h2 { color: #e67e22; border-bottom: 2px solid #e67e22; padding-bottom: 10px; margin-top: 40px; }
         
-        /* Tracker táblázat */
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #34495e; border-radius: 10px; overflow: hidden; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #2c3e50; }
-        th { background-color: #e67e22; color: white; }
-        .count-badge { background: #27ae60; padding: 5px 12px; border-radius: 20px; font-weight: bold; min-width: 30px; display: inline-block; text-align: center; }
-        
-        /* Generátor stílusa */
-        .generator-container { background: #34495e; padding: 25px; border-radius: 10px; text-align: left; margin-top: 20px; }
+        .generator-container { background: #34495e; padding: 25px; border-radius: 10px; margin-top: 20px; }
         label { font-weight: bold; display: block; margin-top: 15px; color: #ecf0f1; }
-        input[type="text"], select, textarea { 
-            width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; box-sizing: border-box;
-        }
-        input[type="file"] { margin-top: 10px; color: #bdc3c7; background: #2c3e50; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; box-sizing: border-box; }
         
-        button { 
-            background: #3498db; color: white; border: none; padding: 12px 25px; border-radius: 5px; 
-            cursor: pointer; font-weight: bold; margin-top: 20px; transition: 0.3s; width: 100%;
-        }
-        button:hover { background: #2980b9; transform: scale(1.01); }
-        .gen-btn { background: #27ae60; }
-        .gen-btn:hover { background: #219150; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-gen { background: #27ae60; color: white; }
+        .btn-download { background: #e74c3c; color: white; display: none; }
+        button:hover { opacity: 0.8; transform: translateY(-2px); }
 
-        pre { background: #1a1a1a; color: #2ecc71; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; font-size: 0.9rem; border: 1px solid #27ae60; margin-top: 10px; }
+        pre { background: #1a1a1a; color: #2ecc71; padding: 15px; border-radius: 5px; overflow-x: auto; white-space: pre-wrap; font-size: 0.85rem; max-height: 400px; border: 1px solid #27ae60; }
+        .step-info { background: #2980b9; padding: 10px; border-radius: 5px; margin-bottom: 20px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>📊 SonicOnBox Admin Panel</h1>
+        <h1>📊 SonicOnBox Pro Admin</h1>
 
-        <h2>Mod Download Tracker</h2>
-        <p>Automatikus statisztikák a <b>downloads.html</b> fájlból.</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Mod Neve</th>
-                    <th>ID / Key</th>
-                    <th>Letöltések száma</th>
-                </tr>
-            </thead>
-            <tbody id="statsTable">
-                <tr><td colspan="3">Keresés...</td></tr>
-            </tbody>
-        </table>
-        <button onclick="scanAndFetch()">🔄 Lista Frissítése</button>
+        <div class="step-info">
+            <strong>Használat:</strong> Töltsd ki az adatokat, válaszd ki a képeket, majd kattints a kód generálására. 
+            A rendszer beilleszti az új modot a meglévő fájlodba, neked csak le kell töltened a kész <b>downloads.html</b>-t!
+        </div>
 
-        <h2>🚀 Auto Mod Card Generator</h2>
+        <h2>🚀 Új Mod Hozzáadása</h2>
         <div class="generator-container">
             <label>Mod Neve:</label>
-            <input type="text" id="genName" placeholder="Pl: Anubius the Hedgehog">
+            <input type="text" id="genName" placeholder="Pl: Shadow the Hedgehog Mod">
 
             <label>Verzió:</label>
             <input type="text" id="genVersion" value="v1.0">
 
-            <label>Játék kategória (data-game):</label>
+            <label>Melyik játékhoz tartozik?</label>
             <select id="genGame">
                 <option value="generations">Sonic Generations</option>
                 <option value="shadow_gen">Shadow Generations</option>
@@ -76,119 +54,121 @@
             </select>
 
             <label>Leírás:</label>
-            <textarea id="genDesc" rows="3" placeholder="Írd ide a mod rövid leírását..."></textarea>
+            <textarea id="genDesc" rows="3" placeholder="Rövid leírás a modról..."></textarea>
 
-            <label>Redirect ID (Egyedi azonosító a trackerhez):</label>
-            <input type="text" id="genRedirectId" placeholder="Pl: anubius_generations">
+            <label>Redirect ID:</label>
+            <input type="text" id="genRedirectId" placeholder="Pl: shadow_mod_01">
 
-            <label>Letöltési Link (Mediafire, Drive, stb.):</label>
-            <input type="text" id="genLink" placeholder="https://...">
+            <label>Letöltési Link:</label>
+            <input type="text" id="genLink" placeholder="Mediafire vagy Google Drive link">
 
-            <label>Képek kiválasztása (Jelöld ki az összeset egyszerre!):</label>
+            <label>Képek (images/ mappába kerülnek):</label>
             <input type="file" id="imagePicker" multiple accept="image/*">
-            <p><small style="color: #bdc3c7;">A generátor automatikusan hozzáadja az <b>images/</b> mappát a fájlok elé.</small></p>
 
-            <button class="gen-btn" onclick="generateModCode()">🛠️ Kód Generálása</button>
+            <div class="btn-group">
+                <button class="btn-gen" onclick="processFullFile()">🛠️ Teljes Fájl Összeállítása</button>
+                <a id="downloadAnchor" style="display:none"></a>
+                <button id="downloadBtn" class="btn-download" onclick="downloadUpdatedFile()">💾 Kész downloads.html Letöltése</button>
+            </div>
 
-            <label style="margin-top: 20px;">Másolható HTML kód:</label>
-            <pre id="outputCode">A generált kód itt fog megjelenni...</pre>
+            <h3 id="previewTitle" style="display:none; margin-top:30px;">Előnézet (Az új downloads.html kódja):</h3>
+            <pre id="outputCode" style="display:none;"></pre>
         </div>
-
-        <p style="margin-top: 30px;"><a href="downloads.html" style="color: #bdc3c7; text-decoration: none;">← Vissza a Letöltésekhez</a></p>
     </div>
 
     <script>
-        // --- TRACKER LOGIKA (MÁR LÉTEZŐ MODOKHOZ) ---
-        async function scanAndFetch() {
-            const tableBody = document.getElementById('statsTable');
-            tableBody.innerHTML = "<tr><td colspan='3'>Adatok betöltése...</td></tr>";
+        let updatedFullContent = "";
 
+        async function processFullFile() {
             try {
+                // 1. Letöltjük a jelenlegi downloads.html tartalmát
                 const response = await fetch('downloads.html?t=' + Date.now());
-                const htmlText = await response.text();
-                const doc = new DOMParser().parseFromString(htmlText, 'text/html');
-                const modCards = doc.querySelectorAll('.mod-card');
+                let currentHtml = await response.text();
+
+                // 2. Legeneráljuk az új mod kártyát
+                const newModCard = createModCard();
+
+                // 3. Megkeressük a megfelelő helyet a beillesztéshez
+                // A kód a modContainer végére, az utolsó div elé szúrja be
+                const containerId = 'id="modContainer"';
+                const containerIndex = currentHtml.indexOf(containerId);
                 
-                if (modCards.length === 0) {
-                    tableBody.innerHTML = "<tr><td colspan='3'>Nem találtam modot a fájlban.</td></tr>";
+                if (containerIndex === -1) {
+                    alert("Hiba: Nem találom a modContainer-t a downloads.html fájlban!");
                     return;
                 }
 
-                let tableHtml = "";
-                for (let card of modCards) {
-                    const linkElement = card.querySelector('a[href*="redirect.html?id="]');
-                    if (!linkElement) continue;
+                // Keressük meg a modContainer végét jelző </div>-et
+                const searchPart = currentHtml.substring(containerIndex);
+                const closingDivIndex = searchPart.indexOf('</div>'); // Az első záró div a p tag után
+                const actualContainerEnd = searchPart.indexOf('</div>', closingDivIndex + 1); 
+                
+                // Beillesztés
+                const insertPosition = containerIndex + actualContainerEnd;
+                updatedFullContent = currentHtml.slice(0, insertPosition) + newModCard + "\n" + currentHtml.slice(insertPosition);
 
-                    const urlParams = new URLSearchParams(linkElement.href.split('?')[1]);
-                    const modId = urlParams.get('id');
-                    const modName = card.querySelector('.mod-title').innerText;
-                    const count = await getCount(modId);
-                    
-                    tableHtml += `<tr><td><strong>${modName}</strong></td><td><code>${modId}</code></td><td><span class="count-badge">${count}</span></td></tr>`;
-                }
-                tableBody.innerHTML = tableHtml;
+                // 4. Megjelenítés és letöltés engedélyezése
+                document.getElementById('outputCode').textContent = updatedFullContent;
+                document.getElementById('outputCode').style.display = "block";
+                document.getElementById('previewTitle').style.display = "block";
+                document.getElementById('downloadBtn').style.display = "block";
+                
+                alert("Siker! A teljes fájl elkészült, töltsd le és írd felül a régit!");
+
             } catch (error) {
-                tableBody.innerHTML = "<tr><td colspan='3' style='color:red;'>Hiba a beolvasáskor.</td></tr>";
+                console.error(error);
+                alert("Hiba történt a fájl beolvasásakor. Győződj meg róla, hogy az admin.html a downloads.html mellett van!");
             }
         }
 
-        async function getCount(modId) {
-            try {
-                const res = await fetch(`https://api.counterapi.dev/v1/soniconbox/${modId}?t=${Date.now()}`);
-                const data = await res.json();
-                return data.count || 0;
-            } catch (e) { return 0; }
-        }
-
-        // --- GENERÁTOR LOGIKA (ÚJ MODOKHOZ) ---
-        function generateModCode() {
-            const name = document.getElementById('genName').value || "Mod Neve";
+        function createModCard() {
+            const name = document.getElementById('genName').value || "Új Mod";
             const version = document.getElementById('genVersion').value || "v1.0";
             const game = document.getElementById('genGame').value;
-            const desc = document.getElementById('genDesc').value || "Leírás...";
-            const redirectId = document.getElementById('genRedirectId').value || "mod_id";
-            const downloadLink = encodeURIComponent(document.getElementById('genLink').value || "");
-            
-            const imageInput = document.getElementById('imagePicker');
-            const files = imageInput.files;
-            
+            const desc = document.getElementById('genDesc').value || "";
+            const redirectId = document.getElementById('genRedirectId').value || "id";
+            const link = encodeURIComponent(document.getElementById('genLink').value || "");
+            const files = document.getElementById('imagePicker').files;
+
             let imagesHtml = "";
-            for (let i = 0; i < files.length; i++) {
-                // Automatikusan az images/ mappát teszi a kiválasztott fájlnév elé
-                imagesHtml += `                        <img src="images/${files[i].name}" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">\n`;
+            for (let file of files) {
+                imagesHtml += `                            <img src="images/${file.name}" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">\n`;
             }
 
-            const code = `
-        <div class="mod-card" data-game="${game}">
-            <div class="mod-header">
-                <span class="mod-title">${name}</span>
-                <span class="mod-version">${version}</span>
-                <span class="game-tag">${game.replace('_', ' ').toUpperCase()}</span>
-            </div>
-            
-            <div class="mod-content">
-                <div class="mod-info">
-                    <p><strong>Description:</strong></p>
-                    <p>${desc}</p>
-                    
-                    <a href="redirect.html?id=${redirectId}&link=${downloadLink}" target="_blank" class="download-btn">
-                        Download
-                    </a>
+            return `
+            <div class="mod-card" data-game="${game}">
+                <div class="mod-header">
+                    <span class="mod-title">${name}</span>
+                    <span class="mod-version">${version}</span>
+                    <span class="game-tag">${game.replace('_', ' ').toUpperCase()}</span>
                 </div>
-
-                <div class="mod-previews">
-                    <p><strong>Previews:</strong></p>
-                    <div class="preview-grid gallery">
+                <div class="mod-content">
+                    <div class="mod-info">
+                        <p><strong>Description:</strong></p>
+                        <p>${desc}</p>
+                        <a href="redirect.html?id=${redirectId}&link=${link}" target="_blank" class="download-btn">Download</a>
+                    </div>
+                    <div class="mod-previews">
+                        <p><strong>Previews:</strong></p>
+                        <div class="preview-grid gallery">
 ${imagesHtml.trimEnd()}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>`;
-
-            document.getElementById('outputCode').textContent = code.trim();
+            `;
         }
 
-        window.onload = scanAndFetch;
+        function downloadUpdatedFile() {
+            if (!updatedFullContent) return;
+            const blob = new Blob([updatedFullContent], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.getElementById('downloadAnchor');
+            a.href = url;
+            a.download = 'downloads.html';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
     </script>
 </body>
 </html>
