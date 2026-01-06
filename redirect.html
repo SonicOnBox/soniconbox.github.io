@@ -1,99 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>SonicOnBox - Downloading...</title>
+    <title>Redirecting...</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #2c3e50;
-            color: white;
-            text-align: center;
-            padding-top: 100px;
-        }
-        .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
+        body { background: #1a1a1a; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        .loader { border: 5px solid #333; border-top: 5px solid #3498db; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        .box {
-            background: rgba(0,0,0,0.3);
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 40px;
-            border-radius: 10px;
-        }
-        .counter-box {
-            background: #27ae60;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 20px;
-            font-size: 1.2rem;
-        }
     </style>
 </head>
 <body>
-
-    <div class="box">
-        <h1>Thanks for downloading!</h1>
-        <p>Your download is starting in a few seconds...</p>
-        
-        <div class="loader"></div>
-        
-        <div id="counterDisplay" class="counter-box">
-            Downloads: Loading...
-        </div>
-
-        <p style="margin-top:30px; font-size:0.9rem;">
-            If the download doesn't start, <a id="manualLink" href="#" style="color:#3498db">click here</a>.
-        </p>
-    </div>
+    <div class="loader"></div>
+    <p>Letöltés indítása...</p>
+    <p style="font-size: 0.8rem; color: #777;">(Ha nem indulna el, kattints <a id="manualLink" href="#" style="color:#3498db;">ide</a>)</p>
 
     <script>
-        window.onload = function() {
-            // 1. Adatok kinyerése a linkből (Pl: ?id=metal_sonic&link=drive...)
-            const urlParams = new URLSearchParams(window.location.search);
-            const targetUrl = urlParams.get('link');
-            // Ha nincs ID megadva, akkor "unknown"-t használunk
-            const modId = urlParams.get('id') || 'unknown_mod'; 
+        // URL paraméterek kiolvasása
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');     // Pl: metal_sonic
+        const link = urlParams.get('link'); // Pl: drive.google.com/....
 
-            if (targetUrl) {
-                document.getElementById('manualLink').href = targetUrl;
+        const manualLink = document.getElementById('manualLink');
+        if(link) {
+            manualLink.href = link;
+        }
 
-                // 2. SZÁMLÁLÓ NÖVELÉSE ÉS LEKÉRÉSE (CounterAPI)
-                // A 'soniconbox' a névterünk, a 'modId' pedig a konkrét mod neve
-                const apiUrl = `https://api.counterapi.dev/v1/soniconbox/${modId}/up`;
-
-                fetch(apiUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Kiírjuk a számot
-                        document.getElementById('counterDisplay').innerText = `Total Downloads: ${data.count}`;
-                    })
-                    .catch(err => {
-                        console.error("Counter Error", err);
-                        document.getElementById('counterDisplay').innerText = "Download starting...";
-                    });
-
-                // 3. Átirányítás 3 másodperc múlva
-                setTimeout(function(){
-                    window.location.href = targetUrl;
-                }, 3000);
-
-            } else {
-                document.body.innerHTML = "<h1>Error: No download link provided.</h1>";
-            }
-        };
+        if (id && link) {
+            // 1. ELKÜLDJÜK A JELET A SZÁMLÁLÓNAK (api.countapi.xyz)
+            // A 'soniconbox' lesz a te egyedi névteret, az 'id' pedig a mod azonosítója
+            fetch(`https://api.countapi.xyz/hit/soniconbox_stat/${id}`)
+                .then(response => {
+                    // Siker vagy hiba esetén is továbbdobjuk, hogy a user ne várjon hiába
+                    window.location.href = link;
+                })
+                .catch(error => {
+                    console.error('Stat hiba:', error);
+                    window.location.href = link; // Ha hiba van a számlálóval, akkor is letölt
+                });
+                
+            // Biztonsági időzítő: Ha a számláló lassú (több mint 2 mp), akkor is továbbdob
+            setTimeout(() => {
+                window.location.href = link;
+            }, 2000);
+            
+        } else {
+            document.body.innerHTML = "<h1>Hiba: Hiányzó paraméterek (ID vagy Link).</h1>";
+        }
     </script>
-
 </body>
 </html>
