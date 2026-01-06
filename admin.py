@@ -3,97 +3,160 @@ from tkinter import filedialog, messagebox, ttk
 import os
 import shutil
 
-# --- KONFIGURÁCIÓ ---
+# --- DESIGN KONFIGURÁCIÓ (Színek) ---
+COLORS = {
+    "bg": "#1e1e2e",           # Sötét háttér
+    "panel": "#252535",        # Panelek háttere
+    "accent": "#00a8ff",       # Sonic Kék gombok
+    "accent_hover": "#0097e6", # Gomb hover
+    "text": "#f5f6fa",         # Fehér szöveg
+    "text_sec": "#7f8fa6",     # Szürke szöveg
+    "input_bg": "#353b48",     # Input mező háttér
+    "success": "#4cd137",      # Zöld (Siker)
+    "danger": "#e84118"        # Piros (Hiba)
+}
+
 BASE_IMAGE_FOLDER = "images"
 
-class SonicAdminApp:
+class ModernSonicApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("SonicOnBox Admin Tool v3.0 - Folder Support")
-        self.root.geometry("600x850")
-        self.root.configure(bg="#2c3e50")
-
-        style = ttk.Style()
-        style.theme_use('clam')
+        self.root.title("SonicOnBox Studio")
+        self.root.geometry("700x850")
+        self.root.configure(bg=COLORS["bg"])
         
-        # --- UI ELEMEK ---
-        self.create_label("1. Melyik oldalt szerkesztjük?", "#f1c40f")
+        # Stílusok beállítása
+        self.setup_styles()
+
+        # --- FŐ KONTÉNER ---
+        main_frame = tk.Frame(root, bg=COLORS["bg"])
+        main_frame.pack(fill="both", expand=True, padx=20, pady=20)
+
+        # 1. FEJLÉC
+        header_frame = tk.Frame(main_frame, bg=COLORS["bg"])
+        header_frame.pack(fill="x", pady=(0, 20))
+        
+        tk.Label(header_frame, text="SONIC ON BOX", font=("Segoe UI", 24, "bold"), 
+                 bg=COLORS["bg"], fg=COLORS["accent"]).pack(side="left")
+        tk.Label(header_frame, text="ADMIN TOOL", font=("Segoe UI", 24, "bold"), 
+                 bg=COLORS["bg"], fg="white").pack(side="left", padx=10)
+
+        # 2. TÍPUS VÁLASZTÓ
+        type_frame = tk.Frame(main_frame, bg=COLORS["panel"], padx=10, pady=10)
+        type_frame.pack(fill="x", pady=5)
+        
         self.file_type = tk.StringVar(value="downloads.html")
-        ttk.Radiobutton(root, text="Downloads (Modok)", variable=self.file_type, value="downloads.html").pack(pady=2)
-        ttk.Radiobutton(root, text="Commission (Munkák)", variable=self.file_type, value="commission.html").pack(pady=2)
-
-        self.create_label("2. Adatok megadása", "#ecf0f1")
         
-        self.create_input_label("Név / Cím:")
-        self.entry_name = ttk.Entry(root, width=50)
-        self.entry_name.pack()
+        # JAVÍTÁS: mb=5 helyett pady=(0, 5)
+        tk.Label(type_frame, text="MIT SZERKESZTÜNK?", font=("Segoe UI", 10, "bold"), 
+                 bg=COLORS["panel"], fg=COLORS["text_sec"]).pack(anchor="w", pady=(0, 5))
+        
+        radio_style = {"bg": COLORS["panel"], "fg": COLORS["text"], "selectcolor": COLORS["bg"], "activebackground": COLORS["panel"], "activeforeground": COLORS["accent"]}
+        
+        rb1 = tk.Radiobutton(type_frame, text="DOWNLOADS (MODOK)", variable=self.file_type, value="downloads.html", font=("Segoe UI", 11), **radio_style)
+        rb1.pack(side="left", padx=20)
+        
+        rb2 = tk.Radiobutton(type_frame, text="COMMISSIONS (MUNKÁK)", variable=self.file_type, value="commission.html", font=("Segoe UI", 11), **radio_style)
+        rb2.pack(side="left", padx=20)
 
-        self.create_input_label("Játék Kategória:")
-        self.combo_game = ttk.Combobox(root, values=[
+        # 3. ADATOK PANEL
+        data_frame = tk.Frame(main_frame, bg=COLORS["panel"], padx=20, pady=20)
+        data_frame.pack(fill="both", expand=True, pady=15)
+
+        # Input mezők segédfüggvénye
+        def create_entry(parent, label_text):
+            # JAVÍTÁS: mt=10 helyett pady=(10, 0)
+            tk.Label(parent, text=label_text.upper(), font=("Segoe UI", 8, "bold"), bg=COLORS["panel"], fg=COLORS["text_sec"]).pack(anchor="w", pady=(10, 0))
+            entry = tk.Entry(parent, font=("Segoe UI", 11), bg=COLORS["input_bg"], fg="white", relief="flat", insertbackground="white")
+            entry.pack(fill="x", ipady=8, pady=(5, 0))
+            return entry
+
+        self.entry_name = create_entry(data_frame, "Név / Cím")
+        
+        # Játék lista
+        tk.Label(data_frame, text="JÁTÉK KATEGÓRIA", font=("Segoe UI", 8, "bold"), bg=COLORS["panel"], fg=COLORS["text_sec"]).pack(anchor="w", pady=(15,0))
+        self.combo_game = ttk.Combobox(data_frame, values=[
             "generations", "shadow_gen", "frontiers", "superstars", "unleashed", 
             "colors", "forces", "lost_world", "sadx", "sa2", "06", "mania", "origins"
-        ], width=47)
-        self.combo_game.pack()
+        ], font=("Segoe UI", 11))
+        self.combo_game.pack(fill="x", ipady=4, pady=5)
         self.combo_game.set("generations")
 
-        self.create_input_label("Leírás:")
-        self.text_desc = tk.Text(root, height=4, width=50)
-        self.text_desc.pack()
+        tk.Label(data_frame, text="LEÍRÁS", font=("Segoe UI", 8, "bold"), bg=COLORS["panel"], fg=COLORS["text_sec"]).pack(anchor="w", pady=(15,0))
+        self.text_desc = tk.Text(data_frame, height=3, font=("Segoe UI", 11), bg=COLORS["input_bg"], fg="white", relief="flat", insertbackground="white")
+        self.text_desc.pack(fill="x", pady=5)
 
-        self.create_input_label("Egyedi ID (fájlnevekhez, pl: metal_sonic):")
-        self.entry_id = ttk.Entry(root, width=50)
-        self.entry_id.pack()
+        # Két oszlopos elrendezés az ID és Linknek
+        row_frame = tk.Frame(data_frame, bg=COLORS["panel"])
+        row_frame.pack(fill="x", pady=10)
+        
+        left_col = tk.Frame(row_frame, bg=COLORS["panel"])
+        left_col.pack(side="left", fill="x", expand=True, padx=(0, 10))
+        self.entry_id = create_entry(left_col, "EGYEDI ID (Fájlnévhez)")
+        
+        right_col = tk.Frame(row_frame, bg=COLORS["panel"])
+        right_col.pack(side="right", fill="x", expand=True, padx=(10, 0))
+        self.entry_link = create_entry(right_col, "LETÖLTÉSI LINK")
 
-        self.create_input_label("Letöltési Link:")
-        self.entry_link = ttk.Entry(root, width=50)
-        self.entry_link.pack()
-
-        # --- ÚJ RÉSZ: MAPPA VÁLASZTÓ ---
-        self.create_label("3. Képek és Mappa", "#e74c3c")
+        # 4. KÉPEK ÉS MAPPA
+        media_frame = tk.Frame(main_frame, bg=COLORS["panel"], padx=20, pady=20)
+        media_frame.pack(fill="x", pady=(0, 15))
         
-        self.create_input_label("Melyik mappába kerüljenek a képek? (images/...)")
+        tk.Label(media_frame, text="CÉL MAPPA (images/...) - Válassz vagy írj újat:", font=("Segoe UI", 8, "bold"), bg=COLORS["panel"], fg=COLORS["text_sec"]).pack(anchor="w")
         
-        # Mappák beolvasása az images/ alól
-        subfolders = self.scan_subfolders()
-        self.combo_folder = ttk.Combobox(root, values=subfolders, width=47)
-        self.combo_folder.pack()
-        self.combo_folder.set("") # Alapértelmezett: gyökér (üres)
+        self.subfolders = self.scan_subfolders()
+        self.combo_folder = ttk.Combobox(media_frame, values=self.subfolders, font=("Segoe UI", 11))
+        self.combo_folder.pack(fill="x", ipady=4, pady=5)
         
-        tk.Label(root, text="(Válassz a listából, vagy írj be újat a létrehozáshoz!)", bg="#2c3e50", fg="#bdc3c7", font=("Arial", 8)).pack()
-
-        self.btn_select_imgs = tk.Button(root, text="Képek Kiválasztása...", command=self.select_images, bg="#3498db", fg="white", font=("Arial", 10, "bold"))
-        self.btn_select_imgs.pack(pady=10)
+        self.btn_select_imgs = tk.Button(media_frame, text="KÉPEK KIVÁLASZTÁSA", font=("Segoe UI", 10, "bold"), 
+                                         bg="#4b4b4b", fg="white", relief="flat", cursor="hand2", command=self.select_images)
+        self.btn_select_imgs.pack(fill="x", pady=10, ipady=5)
         
-        self.lbl_img_status = tk.Label(root, text="Nincs kép kiválasztva", bg="#2c3e50", fg="#bdc3c7")
+        self.lbl_img_status = tk.Label(media_frame, text="Nincs kép kiválasztva", font=("Segoe UI", 9), bg=COLORS["panel"], fg=COLORS["text_sec"])
         self.lbl_img_status.pack()
 
+        # 5. MENTÉS GOMB
+        self.btn_save = tk.Button(main_frame, text="GENERÁLÁS ÉS MENTÉS", font=("Segoe UI", 12, "bold"), 
+                                  bg=COLORS["accent"], fg="white", relief="flat", cursor="hand2", command=self.generate_and_save)
+        self.btn_save.pack(fill="x", ipady=10)
+
+        # Státusz sor
+        self.status_bar = tk.Label(root, text="Készzen áll.", bg="#15151e", fg="#777", anchor="w", padx=10, font=("Consolas", 9))
+        self.status_bar.pack(side="bottom", fill="x")
+
         self.selected_images = []
-        
-        tk.Button(root, text="💾 MENTÉS ÉS GENERÁLÁS", command=self.generate_and_save, bg="#27ae60", fg="white", font=("Arial", 12, "bold"), height=2, width=30).pack(pady=20)
+
+    def setup_styles(self):
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure("TCombobox", fieldbackground=COLORS["input_bg"], background=COLORS["panel"], foreground="white", arrowcolor="white")
 
     def scan_subfolders(self):
-        """Visszaadja az images mappa almappáit."""
-        folders = [""] # Az üres string jelenti az images gyökerét
+        folders = [""] 
         if os.path.exists(BASE_IMAGE_FOLDER):
             for item in os.listdir(BASE_IMAGE_FOLDER):
                 if os.path.isdir(os.path.join(BASE_IMAGE_FOLDER, item)):
                     folders.append(item)
         return folders
 
-    def create_label(self, text, color):
-        tk.Label(self.root, text=text, bg="#2c3e50", fg=color, font=("Arial", 11, "bold")).pack(pady=(15, 5))
-
-    def create_input_label(self, text):
-        tk.Label(self.root, text=text, bg="#2c3e50", fg="white", font=("Arial", 9)).pack(pady=(5, 0))
-
     def select_images(self):
-        file_paths = filedialog.askopenfilenames(title="Válassz képeket", filetypes=[("Image files", "*.png *.jpg *.jpeg")])
+        file_paths = filedialog.askopenfilenames(title="Képek kiválasztása", filetypes=[("Images", "*.png *.jpg *.jpeg")])
         if file_paths:
             self.selected_images = file_paths
-            self.lbl_img_status.config(text=f"{len(file_paths)} kép kiválasztva.")
+            self.lbl_img_status.config(text=f"✓ {len(file_paths)} db kép kiválasztva", fg=COLORS["success"])
+            self.btn_select_imgs.config(bg=COLORS["success"], text="KÉPEK KIVÁLASZTVA ✓")
+        else:
+            self.selected_images = []
+            self.lbl_img_status.config(text="Nincs kép kiválasztva", fg=COLORS["text_sec"])
+            self.btn_select_imgs.config(bg="#4b4b4b", text="KÉPEK KIVÁLASZTÁSA")
+
+    def log(self, message, error=False):
+        color = COLORS["danger"] if error else COLORS["success"]
+        self.status_bar.config(text=message, fg=color)
+        if error: messagebox.showerror("Hiba", message)
+        else: messagebox.showinfo("Siker", message)
 
     def generate_and_save(self):
-        # 1. Adatok begyűjtése
         target_file = self.file_type.get()
         name = self.entry_name.get()
         game = self.combo_game.get()
@@ -103,45 +166,37 @@ class SonicAdminApp:
         subfolder = self.combo_folder.get().strip()
 
         if not name or not rid or not link:
-            messagebox.showerror("Hiba", "A Név, ID és Link mezők kötelezőek!")
+            self.log("A Név, ID és Link mezők kötelezőek!", True)
             return
 
-        # 2. Célmappa meghatározása
-        # Ha a subfolder üres, akkor 'images/', ha van, akkor 'images/subfolder/'
         final_folder_path = os.path.join(BASE_IMAGE_FOLDER, subfolder) if subfolder else BASE_IMAGE_FOLDER
-        
-        # HTML src path (amit a weboldal használ): 'images/almappa/' vagy 'images/'
         web_path_prefix = f"images/{subfolder}/" if subfolder else "images/"
 
-        # 3. Képek másolása
+        # Képek feldolgozása
         img_html = ""
         if self.selected_images:
             if not os.path.exists(final_folder_path):
                 try:
-                    os.makedirs(final_folder_path) # Létrehozza a mappát, ha nincs
-                except OSError as e:
-                    messagebox.showerror("Hiba", f"Nem tudtam létrehozni a mappát: {e}")
+                    os.makedirs(final_folder_path)
+                except Exception as e:
+                    self.log(f"Mappa hiba: {e}", True)
                     return
             
             for index, img_path in enumerate(self.selected_images):
                 ext = os.path.splitext(img_path)[1]
-                # Új név: ID + sorszám + soniconbox + kiterjesztés
                 new_filename = f"{rid}_soniconbox{index+1}{ext}"
                 dest_path = os.path.join(final_folder_path, new_filename)
-                
-                # HTML-hez a relatív útvonal kell
                 final_web_src = f"{web_path_prefix}{new_filename}"
 
                 try:
                     shutil.copy(img_path, dest_path)
                     img_html += f'<img src="{final_web_src}" onclick="openLightbox(this)" onerror="this.src=\'https://via.placeholder.com/150\'">\n                            '
                 except Exception as e:
-                    messagebox.showerror("Hiba", f"Nem sikerült a képmásolás: {str(e)}")
+                    self.log(f"Másolási hiba: {e}", True)
                     return
 
-        # 4. HTML Blokk Generálása
+        # HTML Generálás
         new_block = ""
-        
         if target_file == "commission.html":
             new_block = f"""
             <div class="work-card" data-game="{game}" style="display: flex;">
@@ -174,102 +229,55 @@ class SonicAdminApp:
                 </div>
             </div>"""
 
-        # 5. Fájlba írás (Beszúrás a lista elejére)
+        # Mentés
         try:
             with open(target_file, "r", encoding="utf-8") as f:
                 content = f.read()
 
             insert_pos = -1
-            
             if target_file == "commission.html":
-                # Keresés a dinamikus tartalom elejére
-                # Ha van már elem, elé szúrjuk, ha nincs, a mainContent elejére (a statikusok után)
-                # Egyszerűsített logika: Próbáljuk a 'prices' után tenni közvetlenül a következő work-card elé.
-                
-                # Megkeressük az első olyan kártyát, aminek van 'data-game' attribútuma (tehát mod)
                 first_dynamic_idx = content.find('class="work-card" data-game=')
-                
                 if first_dynamic_idx != -1:
-                    # Ha találtunk modot, visszakeresünk a nyitó div-jéig
                     insert_pos = content.rfind('<div', 0, first_dynamic_idx)
                 else:
-                    # Ha még nincs mod, akkor a statikus elemek után (pl. prices)
-                    # Ha a prices sincs meg, akkor a mainContent elejére
+                    # Fallback ha üres
                     prices_marker = 'id="prices"'
                     prices_idx = content.find(prices_marker)
                     if prices_idx != -1:
-                        # Prices div vége
-                        close_div = content.find('</div>', prices_idx)
-                        # Még egy </div> a tartalma miatt? Nem, a work-card sima div.
-                        # Biztonságosabb pont: A mainContent vége előtt? Nem, az aljára tenné.
-                        # Tegyük a mainContentbe, de keressük meg a végét és szúrjunk elé? Nem, az a sorrend vége.
-                        
-                        # Megoldás: Keressük meg a "content-area" div kezdetét, 
-                        # és ugorjunk át 3 db work-card-ot (Info, OC, Prices).
-                        # Ez bonyolult szövegesen.
-                        
-                        # Egyszerűbb: Szúrjuk be a 'prices' div ZÁRÓ tagje után.
-                        # Ehhez meg kell találni a 'prices' div végét.
-                        # Mivel a 'prices' div tartalma változhat, keressük a következő '<div class="work-card"' vagy 'footer'-t.
-                        pass # A fenti first_dynamic_idx logika lefedi, ha van már elem.
-                    
-                    # Ha nincs dinamikus elem, de van prices, akkor a prices után kéne.
-                    # Mivel ez bonyolult parser nélkül, egy trükk:
-                    # Ha nem talál dinamikus elemet, beszúrja a mainContent végére (a lezáró </div> elé).
-                    end_marker = 'id="mainContent">'
-                    start_pos = content.find(end_marker)
-                    if start_pos != -1:
-                        # Keressük meg a content-area lezáró divjét.
-                        # Ez kockázatos.
-                        # Inkább: Ha nincs dinamikus elem, szúrjuk be az "oc-characters" után?
-                        insert_pos = content.rfind('<div id="prices"') 
-                        # Ez még mindig csak az eleje.
-                        
-                        # VÉGSŐ MEGOLDÁS HA ÜRES A LISTA: 
-                        # Ha nincs dinamikus elem, beszúrjuk a </body> elé? Nem.
-                        # Tegyük fel, hogy van legalább egy statikus elem.
-                        # Szúrjuk be a prices után. Mivel nem tudjuk hol a vége,
-                        # keressük meg a prices utáni első </div>-et? Nem biztos.
-                        
-                        # Maradjunk a bevált módszernél: Ha van dinamikus elem, elé.
-                        # Ha nincs, akkor a 'prices' szöveg előfordulása utáni részre? 
-                        # Tegyük fel, hogy a usernek már van tartalom (mint a példádban).
-                        # A te fájlodban ott vannak a "Generations" modok.
-                        # Tehát a `first_dynamic_idx` működni fog.
-                        pass
+                         # Keressük meg a prices végét, egyszerűen:
+                         pass 
+                    # Ha nincs más, mainContent eleje
+                    main_c = content.find('id="mainContent">')
+                    if main_c != -1: insert_pos = main_c + len('id="mainContent">')
 
-            else: # downloads.html
+            else: # downloads
                 marker = 'id="modContainer">'
                 idx = content.find(marker)
-                if idx != -1:
-                    insert_pos = idx + len(marker)
+                if idx != -1: insert_pos = idx + len(marker)
 
             if insert_pos != -1:
                 final_content = content[:insert_pos] + "\n" + new_block + content[insert_pos:]
-                
                 with open(target_file, "w", encoding="utf-8") as f:
                     f.write(final_content)
                 
-                # Frissítjük a mappa listát (ha újat írt be a user)
+                # UI Reset
                 self.combo_folder['values'] = self.scan_subfolders()
-                
-                messagebox.showinfo("Siker!", f"Hozzáadva a {target_file}-hez!\nKépek mentve ide: {web_path_prefix}")
-                
-                # Mezők tisztítása
                 self.entry_name.delete(0, tk.END)
                 self.entry_id.delete(0, tk.END)
                 self.entry_link.delete(0, tk.END)
                 self.text_desc.delete("1.0", tk.END)
                 self.selected_images = []
-                self.lbl_img_status.config(text="Nincs kép kiválasztva")
+                self.lbl_img_status.config(text="Nincs kép kiválasztva", fg=COLORS["text_sec"])
+                self.btn_select_imgs.config(bg="#4b4b4b", text="KÉPEK KIVÁLASZTÁSA")
                 
+                self.log(f"Sikeres mentés: {target_file} (Mappa: {web_path_prefix})")
             else:
-                messagebox.showerror("Hiba", "Nem találtam a beszúrási pontot. (Van már legalább egy mod feltöltve, vagy a 'modContainer'?)")
+                self.log("Nem találtam a beszúrási helyet a HTML-ben.", True)
 
         except Exception as e:
-            messagebox.showerror("Hiba", str(e))
+            self.log(str(e), True)
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = SonicAdminApp(root)
+    app = ModernSonicApp(root)
     root.mainloop()
