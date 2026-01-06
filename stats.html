@@ -13,21 +13,23 @@
         button:hover { background: #0097e6; }
         .result { margin-top: 30px; font-size: 1.2rem; }
         .number { font-size: 3rem; font-weight: bold; color: #4cd137; display: block; margin-top: 10px; }
+        .error { color: #e74c3c; font-size: 0.9rem; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h1>📊 Letöltés Számláló</h1>
-        <p style="color:#aaa; font-size:0.9rem; margin-bottom: 20px;">Írd be a Mod ID-ját (amit a generátornál adtál meg), hogy lásd hányan kattintottak rá.</p>
+        <p style="color:#aaa; font-size:0.9rem; margin-bottom: 20px;">Írd be a Mod ID-ját (amit a generátornál adtál meg).</p>
         
-        <input type="text" id="modIdInput" placeholder="Pl: metal_sonic_v1">
+        <input type="text" id="modIdInput" placeholder="Pl: metal_sonic">
         <button onclick="checkStats()">Lekérdezés</button>
 
         <div class="result" id="resultArea" style="display:none;">
             Összes letöltés:
             <span class="number" id="countDisplay">0</span>
         </div>
+        <div id="errorMsg" class="error"></div>
     </div>
 
     <script>
@@ -36,20 +38,31 @@
             if(!id) return alert("Írj be egy ID-t!");
 
             const btn = document.querySelector('button');
-            btn.innerText = "Betöltés...";
+            const display = document.getElementById('countDisplay');
+            const resultArea = document.getElementById('resultArea');
+            const errorMsg = document.getElementById('errorMsg');
 
-            // Csak lekérdezzük (get), nem növeljük (hit)
-            fetch(`https://api.countapi.xyz/get/soniconbox_stat/${id}`)
-                .then(res => res.json())
+            btn.innerText = "Betöltés...";
+            resultArea.style.display = "none";
+            errorMsg.innerText = "";
+
+            // ÚJ API LEKÉRDEZÉS
+            fetch(`https://api.counterapi.dev/v1/soniconbox/${id}`)
+                .then(res => {
+                    if (!res.ok) throw new Error("Még nincs adat erről a modról (0 letöltés)");
+                    return res.json();
+                })
                 .then(data => {
-                    document.getElementById('countDisplay').innerText = data.value || 0;
-                    document.getElementById('resultArea').style.display = "block";
+                    display.innerText = data.count; // Itt a 'count' mezőben van az adat
+                    resultArea.style.display = "block";
                     btn.innerText = "Lekérdezés";
                 })
                 .catch(err => {
-                    console.error(err);
-                    document.getElementById('countDisplay').innerText = "0 (vagy hiba)"; // Ha még senki nem töltötte le, 404-et adhat
-                    document.getElementById('resultArea').style.display = "block";
+                    console.log(err);
+                    // Ha hiba van (pl. 404), az azt jelenti, még senki nem töltötte le
+                    display.innerText = "0";
+                    resultArea.style.display = "block";
+                    errorMsg.innerText = "(Még nem történt letöltés, vagy hibás az ID)";
                     btn.innerText = "Lekérdezés";
                 });
         }
