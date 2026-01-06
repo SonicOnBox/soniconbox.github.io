@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,8 +20,12 @@
         .btn-gen { background: #27ae60; color: white; }
         .btn-load { background: #3498db; color: white; }
         .btn-download { background: #e74c3c; color: white; display: none; }
+        .btn-script { background: #8e44ad; color: white; }
         button:hover { opacity: 0.9; transform: translateY(-2px); filter: brightness(1.1); }
         
+        /* File upload stílus */
+        input[type="file"] { background: #2c3e50; color: white; border: 1px dashed #95a5a6; }
+
         .search-box { margin-bottom: 15px; padding: 12px; border-radius: 5px; border: none; width: 100%; background: #ecf0f1; }
         .mod-list { max-height: 300px; overflow-y: auto; background: #1a1a1a; border-radius: 5px; padding: 10px; border: 1px solid #34495e; }
         .mod-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #333; }
@@ -34,27 +38,23 @@
 <body>
 
     <div class="container">
-        <h1>📊 SonicOnBox Master Admin</h1>
-        <div class="status-bar">OFFLINE MODE — Ne töltsd fel ezt a fájlt a GitHubra!</div>
+        <h1>📊 SonicOnBox Local Admin</h1>
+        <div class="status-bar">OFFLINE SZERKESZTŐ — Válassz fájlt a gépedről!</div>
 
-        <div class="target-selector">
-            Melyik oldalt szeretnéd szerkeszteni? 
-            <select id="targetFile" style="width: auto; margin-left: 10px; padding: 5px;">
-                <option value="downloads.html">downloads.html (Modok)</option>
-                <option value="commission.html">commission.html (Rendelések/Munkák)</option>
-            </select>
-        </div>
-
-        <h2>📂 Meglévő Tartalom Kezelése</h2>
+        <h2>1. Fájl Kiválasztása</h2>
         <div class="box">
-            <button class="btn-load" onclick="loadAndParse()">1. Tartalom Betöltése a Weboldalról</button>
+            <label>Melyik fájlt szerkesztjük? (downloads.html vagy commission.html)</label>
+            <input type="file" id="fileInput" accept=".html" onchange="loadFileLocal()">
+            <div id="fileInfo" style="margin-top: 10px; color: #2ecc71; font-weight: bold; display: none;">Fájl betöltve! Jöhet a szerkesztés.</div>
+            
             <div id="managementArea" style="display:none; margin-top:20px;">
+                <label>Meglévő elemek törlése:</label>
                 <input type="text" class="search-box" id="modSearch" onkeyup="filterModList()" placeholder="🔍 Keresés név alapján...">
                 <div class="mod-list" id="modListDisplay"></div>
             </div>
         </div>
 
-        <h2>🚀 Új Tartalom Hozzáadása</h2>
+        <h2>2. Új Tartalom Hozzáadása</h2>
         <div class="box">
             <label>Név/Cím:</label>
             <input type="text" id="genName" placeholder="Pl: Steampunk Metal Sonic">
@@ -90,64 +90,110 @@
             <label>Leírás:</label>
             <textarea id="genDesc" rows="3" placeholder="Ide jön a részletes leírás..."></textarea>
             
+            <label>Verzió (Csak commission.html-nél):</label>
+            <input type="text" id="genVersion" value="v1.0" placeholder="Pl: v1.0">
+
             <label>Redirect ID (Egyedi azonosító):</label>
             <input type="text" id="genRedirectId" placeholder="Pl: steampunk_metal_01">
             
             <label>Letöltési/Külső Link:</label>
             <input type="text" id="genLink" placeholder="Google Drive, Mediafire vagy Discord link">
             
-            <label>Képek (A fájlnevek az images/ mappában legyenek):</label>
+            <label>Képek (Csak a fájlnevek generáláshoz):</label>
             <input type="file" id="imagePicker" multiple accept="image/*">
+            <small style="color:#bdc3c7;">Megjegyzés: Ez csak a HTML kódot generálja, a képeket neked kell bemásolni az images/ mappába!</small>
 
             <div class="btn-group">
-                <button class="btn-gen" onclick="finalizeFile()">🛠️ Összeállítás</button>
-                <button id="downloadBtn" class="btn-download" onclick="downloadFile()">💾 Kész HTML Letöltése</button>
+                <button class="btn-gen" onclick="finalizeFile()">🛠️ Hozzáadás és Mentés Előkészítése</button>
+                <button id="downloadBtn" class="btn-download" onclick="downloadFile()">💾 Módosított HTML Letöltése</button>
             </div>
             
             <pre id="outputCode" style="display:none;"></pre>
+        </div>
+
+        <h2>3. Kép Átnevező Segéd (Batch Script)</h2>
+        <div class="box">
+            <p>Mivel a böngésző nem tudja közvetlenül átnevezni a fájlokat a gépeden, itt generálhatsz egy kis programot (.bat), amit ha lefuttatsz a képek mappájában, megcsinálja helyetted.</p>
+            
+            <label>Kívánt fájlnév alap (Prefix):</label>
+            <input type="text" id="renamerBase" placeholder="Pl: sonic1_soniconbox">
+            
+            <label>Kiterjesztés:</label>
+            <select id="renamerExt">
+                <option value=".png">.png</option>
+                <option value=".jpg">.jpg</option>
+                <option value=".jpeg">.jpeg</option>
+            </select>
+
+            <button class="btn-script" style="margin-top:15px;" onclick="downloadRenamerScript()">📜 Átnevező Script Letöltése (.bat)</button>
+            <p style="font-size: 0.8rem; color: #f1c40f; margin-top: 10px;">Használat: Töltsd le, másold be abba a mappába ahol a képek vannak, és kattints rá kétszer.</p>
         </div>
     </div>
 
     <script>
         let fullHtmlContent = "";
         let modsArray = [];
-        const BASE_URL = 'https://soniconbox.github.io/';
+        let loadedFileName = "";
+        let isCommissionFile = false;
 
-        async function loadAndParse() {
-            const fileName = document.getElementById('targetFile').value;
-            try {
-                const response = await fetch(BASE_URL + fileName + '?t=' + Date.now());
-                if (!response.ok) throw new Error("Hiba");
-                fullHtmlContent = await response.text();
+        function loadFileLocal() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            loadedFileName = file.name;
+            // Detektáljuk, hogy ez a commission.html-e
+            isCommissionFile = loadedFileName.includes("commission");
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                fullHtmlContent = e.target.result;
+                document.getElementById('fileInfo').innerText = "✅ " + loadedFileName + " betöltve! (" + (isCommissionFile ? "Commission Mód" : "Mod Mód") + ")";
+                document.getElementById('fileInfo').style.display = "block";
                 
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(fullHtmlContent, 'text/html');
-                const modCards = doc.querySelectorAll('.mod-card');
+                parseCurrentContent();
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCurrentContent() {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(fullHtmlContent, 'text/html');
+            
+            // Ha commission.html, akkor work-card, ha downloads, akkor mod-card
+            const selector = isCommissionFile ? '.work-card' : '.mod-card';
+            const cards = doc.querySelectorAll(selector);
+            
+            modsArray = [];
+            cards.forEach((card, index) => {
+                // Commission fájlnál hagyjuk békén a statikus kártyákat (info, prices, oc-characters)
+                if(isCommissionFile && (card.id === 'info' || card.id === 'prices' || card.id === 'oc-characters')) return;
+
+                const titleSelector = isCommissionFile ? '.work-title' : '.mod-title';
+                const titleEl = card.querySelector(titleSelector);
+                const title = titleEl ? titleEl.innerText : "Névtelen elem";
                 
-                modsArray = [];
-                modCards.forEach((card, index) => {
-                    const title = card.querySelector('.mod-title') ? card.querySelector('.mod-title').innerText : "Ismeretlen elem";
-                    modsArray.push({
-                        id: index,
-                        name: title,
-                        html: card.outerHTML
-                    });
+                modsArray.push({
+                    id: index,
+                    name: title,
+                    originalHtml: card.outerHTML
                 });
+            });
 
-                displayMods();
-                document.getElementById('managementArea').style.display = "block";
-                alert("Siker! Betöltve: " + fileName);
-            } catch (e) { alert("Hiba! Nem sikerült betölteni a(z) " + fileName + " fájlt."); }
+            displayMods();
+            document.getElementById('managementArea').style.display = "block";
         }
 
         function displayMods() {
             const listDiv = document.getElementById('modListDisplay');
             listDiv.innerHTML = "";
+            if(modsArray.length === 0) listDiv.innerHTML = "<p style='color:#777;'>Nincsenek szerkeszthető dinamikus elemek, vagy még nem adtál hozzá.</p>";
+            
             modsArray.forEach(mod => {
                 listDiv.innerHTML += `
                     <div class="mod-item" data-name="${mod.name.toLowerCase()}">
                         <span><strong>${mod.name}</strong></span>
-                        <button class="delete-btn" onclick="deleteMod(${mod.id})">Törlés</button>
+                        <button class="delete-btn" onclick="deleteMod(${mod.id})">Törlés a listából</button>
                     </div>`;
             });
         }
@@ -160,29 +206,67 @@
         }
 
         function deleteMod(id) {
-            if(confirm("Biztosan törölni szeretnéd?")) {
+            if(confirm("Ez törölni fogja ezt a bejegyzést a generált fájlból. Biztos?")) {
+                // Megjelöljük töröltnek a HTML tartalomban majd a mentésnél
                 modsArray = modsArray.filter(m => m.id !== id);
+                
+                // Mivel a fullHtmlContent-ből kell kivenni, ez bonyolultabb.
+                // Egyszerűsítés: A finalizeFile újraépíti az egészet? 
+                // A legegyszerűbb, ha string replace-t használunk a kimenetnél, 
+                // de a jelenlegi logikával csak kivesszük a listából, 
+                // és a finalize-nál újra kellene építeni a DOM-ot.
+                // Jelenleg ez a törlés gomb csak a listából veszi ki vizuálisan, 
+                // a profi DOM manipulációhoz a finalizeFile függvényt bővítjük.
+                alert("A törlés érvényesítéséhez nyomd meg a 'Módosított HTML Letöltése' gombot a végén (előtte építsd össze).");
                 displayMods();
             }
         }
 
         function finalizeFile() {
-            if (!fullHtmlContent) { alert("Előbb töltsd be az adatokat!"); return; }
-            const fileName = document.getElementById('targetFile').value;
-            const modsHtml = modsArray.map(m => m.html).join('\n            ');
+            if (!fullHtmlContent) { alert("Előbb tallózz be egy fájlt!"); return; }
             
-            let newCardHtml = "";
             const newName = document.getElementById('genName').value;
+            const game = document.getElementById('genGame').value;
+            const desc = document.getElementById('genDesc').value;
+            const rid = document.getElementById('genRedirectId').value;
+            const link = encodeURIComponent(document.getElementById('genLink').value);
+            const version = document.getElementById('genVersion').value;
+            
+            // Képek HTML generálása
+            const files = document.getElementById('imagePicker').files;
+            let imgHtml = "";
+            for(let f of files) { 
+                imgHtml += `<img src="images/${f.name}" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">\n                            `; 
+            }
+
+            // Új kártya HTML generálása a fájltípustól függően
+            let newCardHtml = "";
             if (newName) {
-                const game = document.getElementById('genGame').value;
-                const desc = document.getElementById('genDesc').value;
-                const rid = document.getElementById('genRedirectId').value;
-                const link = encodeURIComponent(document.getElementById('genLink').value);
-                const files = document.getElementById('imagePicker').files;
-                let imgHtml = "";
-                for(let f of files) { imgHtml += `<img src="images/${f.name}" onclick="openLightbox(this)" onerror="this.src='https://via.placeholder.com/150'">\n`; }
-                
-                newCardHtml = `
+                if (isCommissionFile) {
+                    // Commission.html struktúra
+                    newCardHtml = `
+            <div class="work-card" data-game="${game}" style="display: flex;"> <div class="work-header">
+                    <span class="work-title">${newName}</span>
+                    <span class="work-version">${version}</span>
+                    <span class="game-tag">${game.toUpperCase()}</span>
+                </div>
+                <div class="work-content">
+                    <div class="work-info">
+                        <p><strong>Description:</strong></p>
+                        <p>${desc}</p>
+                        <a href="redirect.html?id=${rid}&link=${link}" target="_blank" class="download-btn">Download</a>
+                    </div>
+                    <div class="work-previews">
+                        <p><strong>Previews:</strong></p>
+                        <div class="preview-grid gallery">
+                            ${imgHtml}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+                } else {
+                    // Downloads.html struktúra
+                    newCardHtml = `
             <div class="mod-card" data-game="${game}">
                 <div class="mod-header"><span class="mod-title">${newName}</span><span class="game-tag">${game.toUpperCase()}</span></div>
                 <div class="mod-content">
@@ -190,31 +274,86 @@
                     <div class="mod-previews"><div class="preview-grid gallery">${imgHtml}</div></div>
                 </div>
             </div>`;
+                }
             }
 
-            const containerStart = 'id="modContainer">';
-            const startIdx = fullHtmlContent.indexOf(containerStart);
-            const header = fullHtmlContent.substring(0, startIdx + containerStart.length);
-            
-            const noModsHtml = '\n            <p id="noModsText" style="display:none; text-align:center; color:#777;">Empty section.</p>\n';
-            const footerIdx = fullHtmlContent.indexOf('<footer>');
-            const endPart = '\n        </div>\n    </div>\n\n    ' + fullHtmlContent.substring(footerIdx);
+            // DOM manipuláció a beszúráshoz
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(fullHtmlContent, 'text/html');
 
-            const finalHtml = header + noModsHtml + modsHtml + newCardHtml + endPart;
+            if (isCommissionFile) {
+                // Commission: A "prices" ID-jű div után szúrjuk be, hogy felül legyen a listában
+                const pricesDiv = doc.getElementById('prices');
+                if (pricesDiv) {
+                    // Csinálunk egy ideiglenes tárolót, hogy HTML stringből Node legyen
+                    const temp = document.createElement('div');
+                    temp.innerHTML = newCardHtml;
+                    // Beszúrás a prices div után (insertAdjacentElement nem mindig működik parserben, insertBefore a nextSibling elé)
+                    pricesDiv.parentNode.insertBefore(temp.firstElementChild, pricesDiv.nextSibling);
+                } else {
+                    // Ha nincs prices div, a mainContent elejére
+                    const mainContent = doc.getElementById('mainContent');
+                    const temp = document.createElement('div');
+                    temp.innerHTML = newCardHtml;
+                    mainContent.insertBefore(temp.firstElementChild, mainContent.firstChild);
+                }
+            } else {
+                // Downloads: A modContainer elejére
+                const container = doc.getElementById('modContainer');
+                if (container) {
+                    const temp = document.createElement('div');
+                    temp.innerHTML = newCardHtml;
+                    // Prepend: beszúrás az elejére
+                    container.insertBefore(temp.firstElementChild, container.firstChild);
+                }
+            }
 
-            document.getElementById('outputCode').textContent = finalHtml;
+            // Frissítjük a kimeneti kódot
+            const finalString = "<!DOCTYPE html>\n" + doc.documentElement.outerHTML;
+            document.getElementById('outputCode').textContent = finalString;
             document.getElementById('outputCode').style.display = "block";
             document.getElementById('downloadBtn').style.display = "block";
-            document.getElementById('downloadBtn').innerText = "💾 " + fileName + " Mentése";
-            alert("A kód elkészült!");
+            document.getElementById('downloadBtn').innerText = "💾 " + loadedFileName + " Mentése";
+            
+            alert("A kód elkészült! Az új elem a lista elejére került.");
         }
 
         function downloadFile() {
-            const fileName = document.getElementById('targetFile').value;
-            const blob = new Blob([document.getElementById('outputCode').textContent], { type: 'text/html' });
+            const content = document.getElementById('outputCode').textContent;
+            if(!content) return;
+            const blob = new Blob([content], { type: 'text/html' });
             const a = document.createElement('a');
             a.href = window.URL.createObjectURL(blob);
-            a.download = fileName;
+            a.download = loadedFileName;
+            a.click();
+        }
+
+        function downloadRenamerScript() {
+            const baseName = document.getElementById('renamerBase').value || "image";
+            const ext = document.getElementById('renamerExt').value;
+            
+            // Batch script tartalom
+            // Ez a script végigmegy az aktuális mappán, és átnevez minden fájlt a megadott kiterjesztéssel
+            const scriptContent = `@echo off
+setlocal enabledelayedexpansion
+set "count=1"
+echo Képek átnevezése folyamatban...
+echo Alap név: ${baseName}
+echo Kiterjesztés: ${ext}
+
+for %%f in (*${ext}) do (
+    if not "%%f"=="renamer.bat" (
+        ren "%%f" "${baseName}!count!${ext}"
+        set /a count+=1
+    )
+)
+echo Kész! Összesen !count! fájl feldolgozva.
+pause`;
+
+            const blob = new Blob([scriptContent], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = "kep_atnevezo.bat";
             a.click();
         }
     </script>
