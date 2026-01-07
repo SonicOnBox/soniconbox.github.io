@@ -34,14 +34,6 @@
         #gameSubMenu { margin-left: 15px; border-left: 2px solid #eee; padding-left: 10px; display: none; }
         .game-sub-btn { font-size: 0.85rem; padding: 6px 10px; }
 
-        /* --- KERESŐMEZŐ STÍLUSA (ÚJ) --- */
-        .search-container { margin-bottom: 20px; }
-        .search-input {
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;
-            font-size: 1rem; box-sizing: border-box; transition: 0.3s;
-        }
-        .search-input:focus { border-color: #3498db; outline: none; box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); }
-
         .content-area { flex: 1; }
 
         .work-card {
@@ -105,12 +97,8 @@
 
     <div class="main-layout">
         <div class="sidebar">
-            <div class="search-container">
-                <input type="text" id="workSearchInput" class="search-input" onkeyup="searchWorks()" placeholder="🔍 Keresés a portfólióban...">
-            </div>
-
             <h3>General</h3>
-            <button class="menu-btn active" id="infoBtn" onclick="showSection('info', this)">📂 General Info</button>
+            <button class="menu-btn active" onclick="showSection('info', this)">📂 General Info</button>
             <button class="menu-btn" onclick="showSection('oc-characters', this)">👤 OC Characters</button>
             <button class="menu-btn" onclick="showSection('prices', this)">💰 Prices & Terms</button>
 
@@ -211,8 +199,6 @@
                 </div>
             </div>
 
-            <p id="noWorksText" style="display:none; text-align:center; color:#777; margin-top:20px;">Nincs találat a keresésre.</p>
-
         </div>
     </div>
 
@@ -256,10 +242,6 @@
         }
 
         function showSection(sectionId, btn) {
-            // Töröljük a keresőt
-            document.getElementById('workSearchInput').value = "";
-            document.getElementById('noWorksText').style.display = 'none';
-
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
@@ -275,63 +257,12 @@
         }
 
         function filterWorks(game, btn) {
-            // Töröljük a keresőt
-            document.getElementById('workSearchInput').value = "";
-            document.getElementById('noWorksText').style.display = 'none';
-
             document.querySelectorAll('.game-sub-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
             const works = document.querySelectorAll(`.work-card[data-game="${game}"]`);
             if(works.length > 0) {
                 works.forEach(w => w.style.display = 'flex');
-            }
-        }
-
-        // ÚJ KERESŐ FÜGGVÉNY
-        function searchWorks() {
-            let input = document.getElementById('workSearchInput');
-            let filter = input.value.toLowerCase();
-            
-            // Ha töröljük a keresést, visszatérünk a főoldalra (General Info)
-            if (filter === "") {
-                showSection('info', document.getElementById('infoBtn'));
-                return;
-            }
-
-            // Minden fix szekció (info, árak, stb) elrejtése
-            document.getElementById('info').style.display = 'none';
-            document.getElementById('oc-characters').style.display = 'none';
-            document.getElementById('prices').style.display = 'none';
-
-            // Gombok deaktiválása
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.game-sub-btn').forEach(b => b.classList.remove('active'));
-
-            let works = document.querySelectorAll('.work-card');
-            let visibleCount = 0;
-
-            works.forEach(card => {
-                // Csak azokat a kártyákat nézzük, amik nem a fix információs blokkok
-                if (card.id === 'info' || card.id === 'oc-characters' || card.id === 'prices') {
-                    return; 
-                }
-
-                let text = card.innerText.toLowerCase();
-                if (text.includes(filter)) {
-                    card.style.display = 'flex';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            // Nincs találat üzenet
-            const noWorksText = document.getElementById('noWorksText');
-            if (visibleCount === 0) {
-                noWorksText.style.display = 'block';
-            } else {
-                noWorksText.style.display = 'none';
             }
         }
 
