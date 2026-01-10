@@ -5,61 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SonicOnBox - Commissions & Portfolio</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; color: #333; background-color: #f4f4f4; }
-        
-        header {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/banner.jpg');
-            background-size: cover; background-position: center; color: white; padding: 2rem 0; text-align: center;
+        /* --- ALAPBEÁLLÍTÁSOK (JAVÍTVA) --- */
+        * {
+            box-sizing: border-box; /* Ez akadályozza meg az elcsúszást/zsugorodást */
         }
 
-        .nav-bar { background-color: #333; text-align: center; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
-        .nav-bar a { color: white; text-decoration: none; font-weight: bold; margin: 0 15px; padding: 8px 15px; border-radius: 5px; transition: 0.3s; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            color: #333; 
+            background-color: #f4f4f4; 
+        }
+        
+        /* --- FEJLÉC --- */
+        header {
+            /* JAVÍTVA: Az elérési út banner.jpg-re módosítva a fájllista alapján */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('banner.jpg');
+            background-size: cover; 
+            background-position: center; 
+            color: white; 
+            padding: 4rem 0; /* Kicsit nagyobb térköz, hogy szebb legyen */
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 2.5rem; }
+
+        /* --- MENÜ --- */
+        .nav-bar { 
+            background-color: #333; 
+            text-align: center; 
+            padding: 15px 0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .nav-bar a { 
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin: 0 15px; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            transition: 0.3s; 
+            display: inline-block; /* Mobilon ne folyjon szét */
+        }
         .nav-bar a:hover { background-color: #555; }
         .nav-bar a.active { background-color: #3498db; }
 
-        .main-layout { display: flex; max-width: 1200px; margin: 20px auto; gap: 20px; padding: 0 20px; }
+        /* --- FŐ ELRENDEZÉS --- */
+        .main-layout { 
+            display: flex; 
+            max-width: 1200px; 
+            margin: 40px auto; /* Nagyobb margó felül-alul */
+            gap: 30px; /* Nagyobb térköz az oldalsáv és tartalom között */
+            padding: 0 20px; 
+            align-items: flex-start; /* Fontos: ne nyújtsa meg a sidebart feleslegesen */
+        }
 
-        .sidebar { flex: 0 0 280px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); height: fit-content; }
-        .sidebar h3 { margin-top: 20px; margin-bottom: 10px; color: #e74c3c; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        /* --- OLDALSÁV --- */
+        .sidebar { 
+            flex: 0 0 280px; /* Fix szélesség */
+            width: 280px;
+            background: white; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            height: fit-content; 
+        }
+        .sidebar h3 { 
+            margin-top: 20px; 
+            margin-bottom: 10px; 
+            color: #e74c3c; 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 5px; 
+        }
         .sidebar h3:first-child { margin-top: 0; }
 
         .menu-btn {
-            display: block; width: 100%; text-align: left; padding: 10px; margin-bottom: 5px;
-            background: none; border: none; cursor: pointer; border-radius: 5px; font-size: 0.95rem;
-            color: #555; transition: 0.2s;
+            display: block; 
+            width: 100%; 
+            text-align: left; 
+            padding: 12px 15px; 
+            margin-bottom: 5px;
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            font-size: 0.95rem;
+            color: #555; 
+            transition: 0.2s;
         }
         .menu-btn:hover { background: #f0f0f0; color: #333; }
         .menu-btn.active { background: #3498db; color: white; font-weight: bold; }
 
-        #gameSubMenu { margin-left: 15px; border-left: 2px solid #eee; padding-left: 10px; display: none; }
-        .game-sub-btn { font-size: 0.85rem; padding: 6px 10px; }
+        #gameSubMenu { 
+            margin-left: 10px; 
+            border-left: 2px solid #eee; 
+            padding-left: 5px; 
+            display: none; 
+            margin-top: 5px;
+        }
+        .game-sub-btn { font-size: 0.85rem; padding: 8px 10px; }
 
-        .content-area { flex: 1; }
+        /* --- TARTALMI TERÜLET --- */
+        .content-area { 
+            flex: 1; 
+            min-width: 0; /* Ez megakadályozza a flexbox tartalom túlcsordulását */
+        }
 
         .work-card {
-            background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            padding: 25px; margin-bottom: 30px; display: none; flex-direction: column;
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 30px; 
+            margin-bottom: 30px; 
+            display: none; 
+            flex-direction: column;
             animation: fadeIn 0.4s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Az Info kártya alapból látható legyen, de flex layouttal */
+        #info { display: flex; }
 
-        .work-header { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
-        .work-title { font-size: 1.5rem; color: #2c3e50; font-weight: bold; display: inline-block; }
-        .work-version { background: #e74c3c; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin-left: 10px; vertical-align: middle; }
-        .game-tag { background: #f1c40f; color: #333; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; float: right; font-weight: bold; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .work-content { display: flex; flex-wrap: wrap; gap: 20px; }
-        .work-info { flex: 1; min-width: 300px; }
-        .work-previews { flex: 1; min-width: 300px; }
+        .work-header { border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+        .work-title { font-size: 1.5rem; color: #2c3e50; font-weight: bold; display: inline-block; margin-right: 10px; }
+        .work-version { background: #e74c3c; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; vertical-align: middle; }
+        .game-tag { background: #f1c40f; color: #333; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; float: right; font-weight: bold; margin-top: 5px; }
 
-        .download-btn { display: inline-block; background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .work-content { display: flex; flex-wrap: wrap; gap: 30px; }
+        .work-info { flex: 1; min-width: 250px; }
+        .work-previews { flex: 1; min-width: 250px; }
+
+        .download-btn { 
+            display: inline-block; 
+            background-color: #27ae60; 
+            color: white; 
+            padding: 12px 25px; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            margin-top: 15px; 
+            transition: 0.3s; 
+            text-align: center;
+        }
         .download-btn:hover { background-color: #219150; }
 
-        .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 15px; }
-        .preview-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; transition: 0.2s; border: 2px solid transparent; }
+        .preview-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+            gap: 10px; 
+            margin-top: 15px; 
+        }
+        .preview-grid img { 
+            width: 100%; 
+            height: 100px; 
+            object-fit: cover; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            border: 2px solid transparent; 
+        }
         .preview-grid img:hover { transform: scale(1.05); border-color: #3498db; }
 
-        /* --- LIGHTBOX (LAPOZHATÓ) --- */
+        /* --- LIGHTBOX --- */
         .lightbox { 
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; 
             background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center; 
@@ -79,7 +192,14 @@
 
         footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 40px; }
 
-        @media (max-width: 768px) { .main-layout { flex-direction: column; } .sidebar { width: 100%; } }
+        /* --- MOBIL NÉZET --- */
+        @media (max-width: 768px) { 
+            .main-layout { flex-direction: column; } 
+            .sidebar { width: 100%; flex: none; } 
+            .content-area { width: 100%; }
+            .work-content { flex-direction: column; }
+            .nav-bar a { margin: 0 5px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
@@ -121,22 +241,22 @@
 
         <div class="content-area" id="mainContent">
             
-            <div id="info" class="work-card" style="display:flex;">
+            <div id="info" class="work-card">
                 <h2>How to Order</h2>
                 <p>Welcome to my portfolio and commission page. Use the sidebar to browse my past works or check the prices for new requests. Want a custom model for your Sonic Mobian style OC? Just click the Submit Commission button and fill out the questionnaire to place your order! Keep in mind the site is still a work in progress, so if you spot any issues, don’t hesitate to report them. Can’t wait to see your ideas!</p>
                 
                 <p>
-                    <strong>Status:</strong> <span style="color: #27ae60;">OPEN</span> 
-                    <span style="margin-left: 15px; color: #666;">(You can see how many slots are taken by clicking the Current Queue!)</span>
+                    <strong>Status:</strong> <span style="color: #27ae60; font-weight: bold;">OPEN</span> 
+                    <span style="margin-left: 10px; color: #666; font-size: 0.9rem;">(Check Current Queue for slots!)</span>
                 </p>
                 
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px;">
                     <a href="https://docs.google.com/forms/d/e/1FAIpQLSfxaw1ON6TMX0GEg-IrGL9YfJUlEckaN5sqS_uZQSU15DuEog/viewform?usp=header" target="_blank" class="download-btn">
                         Submit Commission Request
                     </a>
 
                     <a href="https://docs.google.com/spreadsheets/d/1j7RUMlLxU19rAkvHuYmeIwUW6q7oRbAjiGudEnk1KA0/edit?gid=0#gid=0" target="_blank" class="download-btn" style="background-color: #3498db;">
-                        View Current Queue (Status)
+                        View Current Queue
                     </a>
                 </div>
             </div>
@@ -155,7 +275,7 @@
 
             <div class="work-card" data-game="generations">
                 <div class="work-header">
-                    <span class="work-title">Anubius the Hedgehog in Sonic Generations Mod</span>
+                    <span class="work-title">Anubius the Hedgehog</span>
                     <span class="work-version">v1.0</span>
                     <span class="game-tag">Sonic Generations</span>
                 </div>
@@ -166,7 +286,7 @@
                         <p>This is my first OC character and my first mod for the 2011 game Sonic Generations, and I’m excited to share it with you all!</p>
                         
                         <a href="redirect.html?id=anubius_generations&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1eAlVUoyJyG0PJDFgRi4qytHT1pRDIx6H%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
-                            Download
+                            Download Mod
                         </a>
                     </div>
 
@@ -184,7 +304,7 @@
 
             <div class="work-card" data-game="generations">
                 <div class="work-header">
-                    <span class="work-title">Super Saiyan Sonic Generations Mod</span>
+                    <span class="work-title">Super Saiyan Sonic</span>
                     <span class="work-version">v1.0</span>
                     <span class="game-tag">Sonic Generations</span>
                 </div>
@@ -195,7 +315,7 @@
                         <p>This is my second OC character and my second mod for the 2011 game Sonic Generations, and I’m excited to share it with you all!</p>
                         
                         <a href="redirect.html?id=super_god_generations&link=https%3A%2F%2Fdrive.google.com%2Ffile%2Fd%2F1D4h0awh38z-MtjIZavONbYdsdkGe37Dk%2Fview%3Fusp%3Dsharing" target="_blank" class="download-btn">
-                            Download
+                            Download Mod
                         </a>
                     </div>
 
@@ -255,26 +375,41 @@
 
         function showSection(sectionId, btn) {
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.game-sub-btn').forEach(b => b.classList.remove('active')); // Reset sub buttons too
             btn.classList.add('active');
+            
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
-            document.getElementById('gameSubMenu').style.display = 'none';
-            document.getElementById(sectionId).style.display = 'flex';
+            // document.getElementById('gameSubMenu').style.display = 'none'; // Optional: keep submenu open or close it
+            
+            const target = document.getElementById(sectionId);
+            if(target) target.style.display = 'flex';
         }
 
         function toggleWorks(btn) {
-            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            // Remove active from other main buttons but keep submenu open
             const subMenu = document.getElementById('gameSubMenu');
-            subMenu.style.display = (subMenu.style.display === 'block') ? 'none' : 'block';
+            if (subMenu.style.display === 'block') {
+                subMenu.style.display = 'none';
+                btn.classList.remove('active');
+            } else {
+                subMenu.style.display = 'block';
+                btn.classList.add('active');
+            }
         }
 
         function filterWorks(game, btn) {
-            document.querySelectorAll('.game-sub-btn').forEach(b => b.classList.remove('active'));
+            // Highlight sub-button
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            // Keep Works parent active visually if you want, or just the sub button
+            
             document.querySelectorAll('.work-card').forEach(card => card.style.display = 'none');
             const works = document.querySelectorAll(`.work-card[data-game="${game}"]`);
             if(works.length > 0) {
                 works.forEach(w => w.style.display = 'flex');
+            } else {
+                // Opcionális: üzenet ha nincs tartalom
+                // alert("No works found for this game yet!");
             }
         }
 
